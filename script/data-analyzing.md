@@ -1,10 +1,32 @@
 # data analyzing
 
+
+1.  if(!require(<name>)){install.packages("<name>")}
+    * it does "library(<name>)." if R doesn't have the package, R installs it.
+1. library に対して、require は読み込みに失敗した時にサインを出す
+1. knitr is awesome. Highly recommended!
+    * [Knitr is Awesome!](https://www.r-bloggers.com/knitr-is-awesome/)
+    * [Markdown テーブル](https://stats.biopapyrus.jp/r/devel/md-table.html)
+1. beepr allows you not to leave while waiting.
+    * [beepr-stackoverflow](https://stackoverflow.com/questions/3365657/is-there-a-way-to-make-r-beep-play-a-sound-at-the-end-of-a-script)
 1. set up (set wd, import libs, and read data)
 
 ```R
 getwd()
 setwd("/home/kishiyama/home/thesis/ntu-ut-ling-vwp/result")
+
+# install package required.
+if(!require(lme4)){install.packages("lme4")}
+if(!require(reshape)){install.packages("reshape")}
+if(!require(reshape2)){install.packages("reshape2")}
+if(!require(ggplot2)){install.packages("ggplot2")}
+if(!require(knitr)){install.packages("knitr")}
+if(!require(beepr)){install.packages("beepr")}
+if(!require(lmerTest)){install.packages("lmerTest")}
+# if(!require(magrittr)){install.packages("magrittr")}
+if(!require(devtools)){install.packages("devtools")}
+install_github("kisiyama/mudball",ref="master",force=TRUE)
+require(mudball)
 
 library(lme4)
 library(reshape)
@@ -131,96 +153,27 @@ tapply(data2$logit, list(data2$npi, data2$aff), mean)
 sum(data2[data2$cond == "a",]$Target)
 sum(data2[data2$cond == "b",]$Target)
 
-ここでmadballつかえたら楽しいだろうなぁ。
+if(!require(knitr)){install.packages("knitr")}
+if(!require(lmerTest)){install.packages("lmerTest")}
+if(!require(devtools)){install.packages("devtools")}
+install_github("kisiyama/mudball",ref="master",force=TRUE)
+require(mudball)
 
-# data
-# dependent :ｙ
-# ...: predictor
-# rondom1: subj
-# rondom2: item
+model <- lmer(logit ~ npi * aff + (1 + npi*aff |subj) + (1 + npi*aff |item), data = data2)
+model_0 <- lmer(logit ~ npi * aff + (1 |subj) + (1 |item), data = data2)
 
-# selectLmeModel <- function(dependent, fix1, fix2, rondom1, rondom2){
-#   m10 <- lmer(
-#     dependent ~ fix1 * fix2
-#     + (1 + fix1 + fix2 + fix1:fix2 |rondom1)
-#     + (1 + fix1 + fix2 + fix1:fix2 |rondom2))
-#   # ランダム変数名と固定変数名を取得して、それを予測式から外す関数が必要
-#   summary(m10)
-#   print(VarCorr(m10), comp=c("Variance"))
-#   capture.output(print(VarCorr(m10), comp=c("Variance")))
-#
-#   length(capture.output(print(VarCorr(m10), comp=c("Variance"))))
-#
-#   modelvar <- print(VarCorr(m10), comp=c("Variance","Std.Dev"))
-#   print(modelvar)
-#   m00 <- lmer(dependent ~ fix1 * fix2 + (1 | rondom1) + (1 | rondom2))
-#   anova(m10, m00)
-# }
-#
-# selectLmeModel(data2$logit, data2$npi, data2$aff, data2$subj, data2$item)
+best_model = mudball::step(model,beeping=T)
+best_model_summary = lmerTest::summary(best_model)
+fixed_effects = best_model_summary$coefficients
+model_call = best_model_summary$call
+log_name = "lmer.log"
+write("#############################",file=log_name, append=TRUE)
+write("",file=log_name, append=TRUE)
+kable(fixed_effects, format = "markdown")
+write("",file=log_name, append=TRUE)
+write(as.character(model_call), file=log_name, append=TRUE)
+write("#############################", file=log_name, append=TRUE)
 
-#   m00 <- lmer(dependent ~ fix1 * fix2 + (1 | rondom1) + (1 | rondom2))
-#   anova(m10, m00)
-
-# # #汎用性LMEモデル
-m10 <- lmer(logit ~ npi * aff + (1 + npi*aff |subj) + (1 + npi*aff |item), data = data2)
-# m09 <- lmer(logit ~ npi * aff + (1 + aff+npi:aff |subj) + (1 + npi*aff |item), data = data2)
-m00 <- lmer(logit ~ npi * aff + (1 |subj) + (1 |item), data = data2)
-
-anova(m10, m00)
-
-# m10wi <- lmer(logit ~ npi * aff + (1 + npi*aff |subj) + (1 + npi*aff |item), data = data2)
-# m10woi <- lmer(logit ~ npi + aff + (1 + npi*aff |subj) + (1 + npi*aff |item), data = data2)
-# anova(m10wi, m10woi)
-# m10 <- lmer(logit ~ npi * aff + (1 + npi*aff |subj) + (1 + npi*aff |item), data = data2)
-# m10 <- lmer(logit ~ npi * aff + (1 + npi*aff |subj) + (1 + npi*aff |item), data = data2)
-
-
-
-# m10_noccor <- lmer(logit ~ npi * aff + (1 + npi*aff ||subj) + (1 + npi*aff || item), REML=F, data = data2)
-
-# # # conv
-# m09 <- lmer(logit ~ npi * aff + (1 + aff + npi |subj) + (1 + npi*aff |item), data = data2)
-#
-# m08 <- lmer(logit ~ npi * aff + (1 + aff |subj) + (1 + npi*aff |item), data = data2)
-# m07 <- lmer(logit ~ npi * aff + (1 + aff |subj) + (1 + npi+aff |item), data = data2)
-# m06 <- lmer(logit ~ npi * aff + (1 + aff |subj) + (1 + npi |item), data = data2)
-# m07 <- lmer(logit ~ npi * aff + (1 + aff + npi:aff |subj) + (1 + npi:aff |item), data = data2)
-# # conv
-# m06 <- lmer(logit ~ npi * aff + (1 + npi:aff |subj) + (1 + npi:aff |item), data = data2)
-#
-# # signif
-# anova(m09,m06)
-#
-# m09wi <- lmer(logit ~ npi * aff + (1 + aff + npi:aff |subj) + (1 + npi*aff |item), data = data2)
-# m09woi <- lmer(logit ~ npi + aff + (1 + aff + npi:aff |subj) + (1 + npi*aff |item), data = data2)
-# m09won <- lmer(logit ~ aff * npi:aff + (1 + aff + npi:aff |subj) + (1 + npi*aff |item), data = data2)
-# m09woa <- lmer(logit ~ npi + npi:aff + (1 + aff + npi:aff |subj) + (1 + npi*aff |item), data = data2)
-#
-#anova(m09wi, m09woi)
-#
-# m08 <-     lmer(logit ~ aff * npi:aff + (1 + npi+aff |subj) + (1 + npi+aff |item), data = data2)
-# m08wi  <-  lmer(logit ~ npi * aff + (1 + npi+aff |subj) + (1 + npi+aff |item), data = data2)
-# m08woi  <-  lmer(logit ~ npi + aff + (1 + npi+aff |subj) + (1 + npi+aff |item), data = data2)
-# m08won  <-  lmer(logit ~ aff + npi:aff + (1 + npi+aff |subj) + (1 + npi+aff |item), data = data2)
-# m08woa  <-  lmer(logit ~ npi + npi:aff + (1 + npi+aff |subj) + (1 + npi+aff |item), data = data2)
-
-# m09wi <- lmer(logit ~ npi * aff + (1 + aff + npi |subj) + (1 + npi*aff |item), data = data2)
-# m09woi <- lmer(logit ~ npi + aff + (1 + aff + npi |subj) + (1 + npi*aff |item), data = data2)
-# m09won <- lmer(logit ~ aff + npi:aff + (1 + aff + npi |subj) + (1 + npi*aff |item), data = data2)
-# m09woa <- lmer(logit ~ npi + npi:aff + (1 + aff + npi |subj) + (1 + npi*aff |item), data = data2)
-#
-# summary(m09wi)
-#
-# # npi
-# anova(m09wi, m09won)
-#
-# # aff
-# anova(m09wi, m09woa)
-#
-# # npi:aff(interaction)
-# anova(m09wi, m09woi)
-#
 m00wi  <-  lmer(logit ~ npi * aff + (1|subj) + (1|item), data = data2)
 m00woi  <-  lmer(logit ~ npi + aff + (1|subj) + (1|item), data = data2)
 m00won  <-  lmer(logit ~ aff + npi:aff + (1|subj) + (1|item), data = data2)
@@ -230,16 +183,8 @@ summary(m00wi)
 
 # npi
 anova(m00wi, m00won)
-
 # aff
 anova(m00wi, m00woa)
-
 # npi:aff(interaction)
 anova(m00wi, m00woi)
-
-# みねみんのスライドに
-# backward stepwise の方法が書いてあったので参照。
-#
-# latex(m00, file='',booktabs=T,dcolumn=T)
-# library(xtable)
 ```
