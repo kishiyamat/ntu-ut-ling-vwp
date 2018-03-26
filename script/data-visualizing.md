@@ -8,12 +8,15 @@ toward the target entity.
 ```R
 getwd()
 setwd("/home/kishiyama/home/thesis/ntu-ut-ling-vwp/result")
+# kishiyama for linux, kisiyama for windows
+setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
 
 library(ggplot2)
 library(reshape)
 
 data_all <- read.csv("./output.csv", header =T)
 summary(data_all)
+head(data_all)
 ```
 
 1. digitalize the data
@@ -103,7 +106,6 @@ gr.temp$w <- ifelse((gr.temp$cond == "a" | gr.temp$cond == "b"), gr.temp$D, gr.t
 
 gr.temp$cn1 <- ifelse((gr.temp$cond == "a" | gr.temp$cond == "b"), gr.temp$A, gr.temp$B)
 gr.temp$wn1 <- ifelse((gr.temp$cond == "a" | gr.temp$cond == "b"), gr.temp$B, gr.temp$A)
-
 
 #aggregate for graph (Use t1~t4)
 gra <- aggregate(

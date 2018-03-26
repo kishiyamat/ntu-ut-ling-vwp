@@ -58,6 +58,7 @@ This time it is `npi_2017_New test` and we
 ```R
 getwd()
 setwd("/home/kishiyama/home/thesis/ntu-ut-ling-vwp/result")
+setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
 
 file_pattern <- "npi_2017_New test"
 data_list <- list.files(pattern = file_pattern)
@@ -309,8 +310,7 @@ matrix function
 
 
 ```R
-addStudioEventDataList = function(list_of_eventdata, base_data_frame) {
-    # Using matrix function, 
+addStudioEventDataList = function(list_of_eventdata, base_data_frame) { # Using matrix function, 
     # this make a matrix object, which has 
     # the same number of rows as the base data frame
     # the same number of cols as the event data
@@ -334,6 +334,7 @@ We are going to append the formatted data to the variable `data_all`
 ```R
 getwd()
 setwd("/home/kishiyama/home/thesis/ntu-ut-ling-vwp/result")
+setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
 
 data_all <- NULL
 
@@ -416,4 +417,53 @@ table(data_with_fixation$ParticipantName, data_with_fixation$SegmentName)
 1. the information about the participants (ParticipantName)
 1. the condition of the trial (Condition)
 1. the item in the trial (ItemNo)
+
+```R
+# before
+  ParticipantName SegmentName SegmentStart SegmentEnd SegmentDuration
+1             P05   Segment 1        51212      61655           10443
+2             P05   Segment 1        51212      61655           10443
+3             P05   Segment 1        51212      61655           10443
+4             P05   Segment 1        51212      61655           10443
+5             P05   Segment 1        51212      61655           10443
+6             P05   Segment 1        51212      61655           10443
+  RecordingTimestamp  StudioEvent StudioEventData FixationIndex SaccadeIndex
+1              51212 SceneStarted 1 3 6 d A D C B            NA            1
+2              51213                                         NA            1
+3              51217                                         NA            1
+4              51220                                         NA           NA
+5              51223                                         NA            2
+6              51227                                         NA            2
+  GazeEventType GazeEventDuration FixationPointX..MCSpx. FixationPointY..MCSpx.
+1       Saccade                63                     NA                     NA
+2       Saccade                63                     NA                     NA
+3       Saccade                63                     NA                     NA
+4  Unclassified                 3                     NA                     NA
+5       Saccade                10                     NA                     NA
+6       Saccade                10                     NA                     NA
+  PupilLeft PupilRight  X
+1        NA         NA NA
+2      1.54       2.42 NA
+3      1.70       2.00 NA
+4      2.14       2.05 NA
+5      1.59       2.05 NA
+6      1.53       2.03 NA
+
+# after
+   ParticipantName SegmentName FixationPointX FixationPointY GazeStart GazeEnd
+35             P05  Segment 10           1338            306       443     566
+34             P05  Segment 10           1338            305       723     886
+41             P05  Segment 10            320            699      1489    1642
+30             P05  Segment 10            505            277      1869    1999
+26             P05  Segment 10            365            199      2042    2219
+25             P05  Segment 10            406            176      2239    2362
+   Order List ItemNo Condition AOI1 AOI2 AOI3 AOI4 AOI
+35     1   26     23         c    D    C    A    B   2
+34     1   26     23         c    D    C    A    B   2
+41     1   26     23         c    D    C    A    B   3
+30     1   26     23         c    D    C    A    B   1
+26     1   26     23         c    D    C    A    B   1
+25     1   26     23         c    D    C    A    B   1
+> 
+```
 

@@ -2,6 +2,12 @@
 # 2. Data trimming and analysis (by Kishiyama) (10:45-12:30)
 
 ## 2.1 Experiment design of Kishiyama(2018) (5 minutes, 10:45-10:50)
+
+### 
+### 
+### 
+
+
 > Short introduction of the design and prediction in Kishiyama (2018))
 どんなデザインでどんなデータが出力できるのか。
 いつ、なにをどれくらい見るはずだ、という仮説を立てて検証したい。
