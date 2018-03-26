@@ -344,21 +344,21 @@ i = 1
 for(i in 1:length(data_list)){
     print(paste("now access to:", data_list[i]))
     raw_data_frame = getDataFrameFromFileName(as.character(data_list[i]))
-    head(raw_data_frame)
+    # head(raw_data_frame)
     reduced_data_frame = reduceRawDataFrame(raw_data_frame)
-    head(reduced_data_frame)
+    # head(reduced_data_frame)
     data_with_gaze= addGazeFlag(reduced_data_frame)
-    head(data_with_gaze)
+    # head(data_with_gaze)
     list_of_eventdata = extractStudioEventDataList(as.character(data_list[i]))
-    head(list_of_eventdata )
+    # head(list_of_eventdata )
     # check if numcol of StudioEventData is 8
     if (length(list_of_eventdata)!=numcol){
         warning(paste("Bad trial: ", data_list[i]))
     }
     data_with_eventdata = addStudioEventDataList(list_of_eventdata,data_with_gaze)
-    head(data_with_eventdata)
+    # head(data_with_eventdata)
     data_all = rbind(data_all, data_with_eventdata)
-    head(data_all)
+    # head(data_all)
 }
 
 ```
