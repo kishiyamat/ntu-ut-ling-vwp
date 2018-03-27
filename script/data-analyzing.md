@@ -3,10 +3,9 @@
 
 1.  if(!require(<name>)){install.packages("<name>")}
     * it does "library(<name>)." if R doesn't have the package, R installs it.
-1. library に対して、require は読み込みに失敗した時にサインを出す
 1. knitr is awesome. Highly recommended!
     * [Knitr is Awesome!](https://www.r-bloggers.com/knitr-is-awesome/)
-    * [Markdown テーブル](https://stats.biopapyrus.jp/r/devel/md-table.html)
+    * [Markdown table](https://stats.biopapyrus.jp/r/devel/md-table.html)
 1. beepr allows you not to leave while waiting.
     * [beepr-stackoverflow](https://stackoverflow.com/questions/3365657/is-there-a-way-to-make-r-beep-play-a-sound-at-the-end-of-a-script)
 1. set up (set wd, import libs, and read data)
@@ -14,9 +13,11 @@
 ```R
 getwd()
 setwd("/home/kishiyama/home/thesis/ntu-ut-ling-vwp/result")
+setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
 
 # install package required.
 if(!require(lme4)){install.packages("lme4")}
+# if you're using WSL, you need to have some packages before.
 if(!require(reshape)){install.packages("reshape")}
 if(!require(reshape2)){install.packages("reshape2")}
 if(!require(ggplot2)){install.packages("ggplot2")}
