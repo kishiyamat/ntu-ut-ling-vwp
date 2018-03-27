@@ -39,8 +39,8 @@ P05     Segment 1       51212   61655   10443   51220                           
 P05     Segment 1       51212   61655   10443   51223                           2       Saccade 10                      1.59    2.05    
 ```
 
-> これは最後にするべき話。まずは一つのファイルを整形するところから始める。
-
+> we should make the list at the end, maybe.
+ 
 ## List of files
 
 We need to make a list of files,
@@ -161,22 +161,6 @@ head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"))
 1. remove StudioEvent
 
 ```R
-# input : data.frame
-    # ParticipantName, SegmentName,
-        # SegmentStart, SegmentEnd, SegmentDuration, RecordingTimestamp, StudioEvent, StudioEventData,
-    # FixationIndex,
-        # SaccadeIndex,
-    # GazeEventType, GazeEventDuration
-    # FixationPointX..MCSpx., FixationPointY..MCSpx.,
-        # PupilLeft, PupilRight, X
-# return : data.frame
-    # ParticipantName, SegmentName,
-    # FixationIndex,
-    # GazeEventType, GazeEventDuration,
-    # FixationPointX FixationPointY
-    # Timestamp
-    # TODO 結局 Timestamp ってなに？
-
 # raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 
 reduceRawDataFrame <- function(raw){
@@ -286,7 +270,6 @@ addGazeFlag <- function(refined_data){
     return(data_with_gaze_flag)
 }
 ```
-書き加えたコードの方が必要な引数が少ない。
 
 1. Extracting information of E-prime from a file taking a file name as an argument
 
@@ -327,7 +310,7 @@ addStudioEventDataList = function(list_of_eventdata, base_data_frame) { # Using 
 }
 ```
 
-### 実行部分
+### Main part
 
 We are going to append the formatted data to the variable `data_all`
 
@@ -367,12 +350,11 @@ for(i in 1:length(data_list)){
 1. the area where they focused (AOI)
 
 ```R
-# グローバル変数に data_all がある状態。
+# we need to have data_all globally
 
-# 1080*1920の画面を4分割にする。
+# split 1080*1920 into four panes.
 #  1  2
 #  3  4
-# -1 と振られた奴が。
 data_all$AOI <- ifelse(data_all$FixationPointX >= 0 & data_all$FixationPointX < 960
     & data_all$FixationPointY >= 0 & data_all$FixationPointY < 540,
     1,
@@ -404,10 +386,9 @@ head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"))
 # after
 head(data_with_fixation)
 
-# データ全体のバランスを確認します。
 table(data_with_fixation$ParticipantName, data_with_fixation$SegmentName)
 
-# csvで保存
+# savef as csv
 # write.csv(data_with_fixation, "./csv/output.csv", row.names=F)
 ```
 
