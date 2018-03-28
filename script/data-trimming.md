@@ -44,7 +44,7 @@ P05     Segment 1       51212   61655   10443   51223                           
 ```
 
 ### Makine some functions
-
+#### Practice
 ```R
 doubleMe <- function(argument){
     doubled_argument = argument * 2
@@ -54,10 +54,11 @@ doubleMe <- function(argument){
 
 To make a function, you need:
 * purpose
-    * return something or not
 * name for new function
 * function `function` which returns a function
 * argument(s) if you want.
+
+#### Data trimming
 
 1. get the data frame from a file name
 > here, I'd like to get a data from file name.
@@ -74,6 +75,7 @@ getDataFrameFromFileName <- function(file_name){
 
 ```R
 getwd()
+# set dir to result
 setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
 head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"))
   ParticipantName SegmentName SegmentStart SegmentEnd SegmentDuration
@@ -108,46 +110,51 @@ head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"))
 ```
 
 Then, I would like to remove some colums.
-1. remove columns not needed and adding Timestamps
+1. removing columns not needed and adding Timestamps
 1. extracting fixations(remove saccade and unclassified)
 1. removing StudioEvent
 
+#### Removing columns not needed and adding Timestamps
+
 ```R
-# we assign data frame to `raw` for test purpose.
+# we assign the data frame to `raw` for test purpose.
 # we can check the contents using `head` function
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 
 reduceRawDataFrame <- function(raw){
-    # remove some columns
+    # removing some columns
     selected_column <- raw[,c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
         "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
         "FixationPointX..MCSpx.", "FixationPointY..MCSpx.", "PupilLeft", "PupilRight")]
-    # rename some of them
+    # renaming some of them
     renamed_column <- NULL
     colnames(selected_column) <- c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
         "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
         "FixationPointX", "FixationPointY", "PupilLeft", "PupilRight")
     renamed_column <- selected_column
+    # you can see the new data frame with tiny changes
     # head(renamed_column)
 
-    # I would like to add Timestamps
-    # SegmentStart: onset of trial(e.g: 500)
-    # RecordingTimestamp: recording point(e.g: 500--1000)
-    # let stamp start from 0 
+    # I would like to add Timestamps as new column
+    # run the code before explaining it
     column_with_timestamp <- NULL
     renamed_column$Timestamp <- renamed_column$RecordingTimestamp - renamed_column$SegmentStart
     column_with_timestamp <- renamed_column
+    # head(column_with_timestamp)
+    # SegmentStart: onset of trial(e.g: 500)
+    # RecordingTimestamp: recording point(e.g: 500--1000)
 
     # remove some columns(again)
+    # now we don't need some of them.
     # ~~SegmantStart, SegmentEnd, SegmentDuration, RecordingTimestamp, PupilLeft, PupilRight~~
     selected_column <- column_with_timestamp[,c("ParticipantName", "SegmentName", "FixationIndex",
         "GazeEventType", "GazeEventDuration", "FixationPointX", "SaccadeIndex", "FixationPointY", "Timestamp")]
 
-    # extact Fixation and Saccade
+    # extacting Fixation and Saccade (other than Unclassified)
     # GazeEventType (Unclassified, Fixation, Saccade)
     selected_column <- selected_column[selected_column$GazeEventType != "Unclassified",]
-    # If FixationIndex is an NA,
-    # the data in the row is about succade.
+    # Now, if FixationIndex is an NA,
+    # the data in the row is about saccade.
     # so we can replace the NA with SaccadeIndex.
     selected_column$FixationIndex <- ifelse(is.na(selected_column$FixationIndex),
         selected_column$SaccadeIndex,
@@ -155,7 +162,7 @@ reduceRawDataFrame <- function(raw){
 
     # If the fixation point is NA, 
     # that means that they didn't see the display.
-    # we replace NA with -1 so that we can tell that
+    # we replace NA with -1 so that we can tell that.
     selected_column$FixationPointX <- ifelse(is.na(selected_column$FixationPointX),
         -1,
         selected_column$FixationPointX)
@@ -171,10 +178,10 @@ reduceRawDataFrame <- function(raw){
     return(refined_column)
 }
 
-# check if it works
+# run the function definition and check if it works
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 test = refineRawDataFrame(raw) 
-
+head()
 ```
 
 1. make data simpler based on Fixation
