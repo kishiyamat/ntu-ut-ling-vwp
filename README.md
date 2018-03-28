@@ -16,11 +16,9 @@ Because it is quite difficult to share code in PPT,
 I'd like to use github to do that below.
 
 ### Trimming (10 minutes)
-
-[](https://github.com/kisiyama/ntu)
-
+[data trimming](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/master/script/data-trimming.md)
 ### Graphing (10 minutes)
-
+[data visualizing](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/master/script/data-visualizing.md)
 ### LME (10 minutes)
-
+[data analyzing](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/master/script/data-analyzing.md)
 ### Misc-tips
