@@ -180,10 +180,14 @@ reduceRawDataFrame <- function(raw){
 
 # run the function definition and check if it works
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
-test = refineRawDataFrame(raw) 
-head()
+refined_data = reduceRawDataFrame(raw) 
+head(raw)
+head(refined_data)
 ```
 
+So far, we removed columns not needed and adding Timestamps
+
+We are going to...
 1. make data simpler based on Fixation
 > integrate rows with the same fixation index into a row
 1. make it clear when the fixation begins and ends
@@ -191,6 +195,8 @@ head()
 > Aggregate splits the data into subsets, computes summary statistics for each, and returns the result in a convenient form.
 
 ```R
+head(refined_data)
+help(aggregate)
 addGazeFlag <- function(refined_data){
     # Making subset by FixationIndex
     # Getting min of timestamp in the subset...
@@ -204,6 +210,7 @@ addGazeFlag <- function(refined_data){
     )
     colnames(min_table) <- c("ParticipantName", "SegmentName", "FixationIndex",
         "GazeEventType", "GazeEventDuration", "FixationPointX", "FixationPointY", "GazeStart")
+    # head(min_table)
     min_table <- min_table[order(min_table$ParticipantName,
     min_table$SegmentName, min_table$GazeStart),]
 
