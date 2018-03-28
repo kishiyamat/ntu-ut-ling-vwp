@@ -1,6 +1,6 @@
 # data trimming
 
-To investigate the eye-movements we got, we need at least
+To investigate the eye-movements, we need at least
 
 1. the area where they focused (AOI)
 1. the content on the area of interest (AOI1,AOI2,...)
@@ -8,6 +8,8 @@ To investigate the eye-movements we got, we need at least
 1. the information about the participants (ParticipantName)
 1. the condition of the trial (Condition)
 1. the item in the trial (ItemNo)
+
+And they will look like this:
 
 ```csv
 "ParticipantName","SegmentName","FixationPointX","FixationPointY","GazeStart","GazeEnd","Order","List","ItemNo","Condition","AOI1","AOI2","AOI3","AOI4","AOI"
@@ -18,7 +20,7 @@ To investigate the eye-movements we got, we need at least
 "P05","Segment 1",424,181,831,1048,"1","3","6","d","A","D","C","B",1
 ```
 
-The outputs from Tobii have
+By contrast, the outputs from Tobii have
 
 1. x y coordinate of the gaze event
     * but not AOI information
@@ -30,6 +32,8 @@ The outputs from Tobii have
 1. information from E-Prime(StudioEvent)
     * somehow we need to retrieve it from the row.
 
+And look like this:
+
 ```tsv
 ParticipantName SegmentName     SegmentStart    SegmentEnd      SegmentDuration RecordingTimestamp      StudioEvent     StudioEventData FixationIndex   SaccadeIndex    GazeEventType   GazeEventDuration       FixationPointX (MCSpx)  FixationPointY (MCSpx)  PupilLeft       PupilRight      
 P05     Segment 1       51212   61655   10443   51212   SceneStarted    1 3 6 d A D C B         1       Saccade 63                                      
@@ -39,81 +43,26 @@ P05     Segment 1       51212   61655   10443   51220                           
 P05     Segment 1       51212   61655   10443   51223                           2       Saccade 10                      1.59    2.05    
 ```
 
-> we should make the list at the end, maybe.
- 
-## List of files
-
-We need to make a list of files,
-so that we can apply the functions we made to all files.
-
-Data from Tobii has a format.
-It looks like... 
-`<project>_<test>_<participant>_<segment>.tsv`
-
-This time it is `npi_2017_New test` and we 
-1. set this pattern to the variable `file_pattern`
-1. let R find the files with the pattern and set them to `data_list`
-1. check if we correctly get the files
+### Makine some functions
 
 ```R
-getwd()
-setwd("/home/kishiyama/home/thesis/ntu-ut-ling-vwp/result")
-setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
-
-file_pattern <- "npi_2017_New test"
-data_list <- list.files(pattern = file_pattern)
-if (length(data_list) == 0){
-    print('you might want to make some changes')
-}else{
-    print('loaded')
+doubleMe <- function(argument){
+    doubled_argument = argument * 2
+    return((doubled_argument)) 
 }
 ```
 
-## filter out files without fixation
-
-1. make a blank list for the files with fixation
-1. read each `file_name` and check if it has fixation
-1. append the data with fixation to `filtered_list` 
-
-```R
-# input: list
-# output: list
-filterOutBadTrials = function(data_list){
-    # create a list
-    filtered_list = as.list(NULL)
-    for(file_name in data_list){
-        trial = read.table(file_name, head=T, sep="\t",
-            na.string="NA", encoding="UTF-8")
-        fixations_in_trial = trial[trial$GazeEventType == "Fixation",]
-        if(nrow(fixations_in_trial) == 0){
-            warning(paste("Bad trial:",file_name))
-        }else{
-            filtered_list = append(filtered_list, file_name)
-        }
-    }
-    if (length(filtered_list) == length(data_list)){
-        message("there's no bad trial!")
-    }
-    return(filtered_list)
-}
-filtered_data_list = filterOutBadTrials(data_list)
-```
-
-## integrate data in each segment and participants
-
-For each file, we are going to
-
-1. get a data frame from a file name
-    * string -> data frame
-1. add Timestamps and remove columns not needed
-    * data frame -> data frame
-1. make data simpler based on Fixation
-    * data frame -> data frame
-1. append information from E-prime
-
-### make some functions!
+To make a function, you need:
+* purpose
+    * return something or not
+* name for new function
+* function `function` which returns a function
+* argument(s) if you want.
 
 1. get the data frame from a file name
+> here, I'd like to get a data from file name.
+> but I don't want to repeat calling `read.table`
+> because it requires some arguments.
 
 ```R
 getDataFrameFromFileName <- function(file_name){
@@ -124,6 +73,8 @@ getDataFrameFromFileName <- function(file_name){
 ```
 
 ```R
+getwd()
+setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
 head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"))
   ParticipantName SegmentName SegmentStart SegmentEnd SegmentDuration
 1             P05   Segment 1        51212      61655           10443
@@ -156,11 +107,14 @@ head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"))
 >
 ```
 
-1. add Timestamps and remove columns not needed
-1. extract fixations(remove saccade and unclassified)
-1. remove StudioEvent
+Then, I would like to remove some colums.
+1. remove columns not needed and adding Timestamps
+1. extracting fixations(remove saccade and unclassified)
+1. removing StudioEvent
 
 ```R
+# we assign data frame to `raw` for test purpose.
+# we can check the contents using `head` function
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 
 reduceRawDataFrame <- function(raw){
@@ -174,8 +128,9 @@ reduceRawDataFrame <- function(raw){
         "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
         "FixationPointX", "FixationPointY", "PupilLeft", "PupilRight")
     renamed_column <- selected_column
+    # head(renamed_column)
 
-    # add Timestamps
+    # I would like to add Timestamps
     # SegmentStart: onset of trial(e.g: 500)
     # RecordingTimestamp: recording point(e.g: 500--1000)
     # let stamp start from 0 
@@ -312,6 +267,76 @@ addStudioEventDataList = function(list_of_eventdata, base_data_frame) { # Using 
 
 ### Main part
 
+#### List of files
+
+We need to make a list of files,
+so that we can apply the functions we made to all files.
+
+Data from Tobii has a format.
+It looks like... 
+`<project>_<test>_<participant>_<segment>.tsv`
+
+This time it is `npi_2017_New test` and we 
+1. set this pattern to the variable `file_pattern`
+1. let R find the files with the pattern and set them to `data_list`
+1. check if we correctly get the files
+
+```R
+getwd()
+setwd("/home/kishiyama/home/thesis/ntu-ut-ling-vwp/result")
+setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
+
+file_pattern <- "npi_2017_New test"
+data_list <- list.files(pattern = file_pattern)
+if (length(data_list) == 0){
+    print('you might want to make some changes')
+}else{
+    print('loaded')
+}
+```
+
+#### filter out files without fixation
+
+1. make a blank list for the files with fixation
+1. read each `file_name` and check if it has fixation
+1. append the data with fixation to `filtered_list` 
+
+```R
+# input: list
+# output: list
+filterOutBadTrials = function(data_list){
+    # create a list
+    filtered_list = as.list(NULL)
+    for(file_name in data_list){
+        trial = read.table(file_name, head=T, sep="\t",
+            na.string="NA", encoding="UTF-8")
+        fixations_in_trial = trial[trial$GazeEventType == "Fixation",]
+        if(nrow(fixations_in_trial) == 0){
+            warning(paste("Bad trial:",file_name))
+        }else{
+            filtered_list = append(filtered_list, file_name)
+        }
+    }
+    if (length(filtered_list) == length(data_list)){
+        message("there's no bad trial!")
+    }
+    return(filtered_list)
+}
+filtered_data_list = filterOutBadTrials(data_list)
+```
+
+## integrate data in each segment and participants
+
+For each file, we are going to
+
+1. get a data frame from a file name
+    * string -> data frame
+1. add Timestamps and remove columns not needed
+    * data frame -> data frame
+1. make data simpler based on Fixation
+    * data frame -> data frame
+1. append information from E-prime
+
 We are going to append the formatted data to the variable `data_all`
 
 ```R
@@ -324,7 +349,7 @@ data_all <- NULL
 # make sure the number of columns which we let E-primesend to Tobi
 numcol = 8
 i = 1
-for(i in 1:length(data_list)){
+for(i in 1:length(filtered_data_list)){
     print(paste("now access to:", data_list[i]))
     raw_data_frame = getDataFrameFromFileName(as.character(data_list[i]))
     # head(raw_data_frame)

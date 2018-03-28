@@ -1,4 +1,5 @@
 getwd()
+# if you use GUI, choose the right directory with is instead of running setwd.
 setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
 
 getDataFrameFromFileName <- function(file_name){

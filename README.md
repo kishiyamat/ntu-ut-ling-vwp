@@ -8,7 +8,6 @@
 ### Data Structure (5 minutes)
 
 * download data from github
-    * what it github?
 * open the data with R
 * make function
 
