@@ -1,6 +1,5 @@
 # data analyzing
 
-
 1.  if(!require(<name>)){install.packages("<name>")}
     * it does "library(<name>)." if R doesn't have the package, R installs it.
 1. knitr is awesome. Highly recommended!

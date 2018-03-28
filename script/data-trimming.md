@@ -161,7 +161,7 @@ head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"))
 1. remove StudioEvent
 
 ```R
-# raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
+raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 
 reduceRawDataFrame <- function(raw){
     # remove some columns
