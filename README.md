@@ -2,33 +2,14 @@
 Kishiyama
 https://github.com/kisiyama
 
-???
-this is note for me.
-
----
-
-## 2.1 Experiment design of Kishiyama(2018) (5 minutes, 10:45-10:55)
-We have seen this.
-
-<!---
-???
-check how note in comment works
--->
----
-
 ## 2.2 Analysis using R
-
-見えてますか？
-???
-<!---
-check how note in comment works
--->
 
 ### Data Structure (5 minutes)
 
 * Downloading data from Github
 * Opening the data with R
 
+???
 I'd like to use github to do that below,
 because it is quite difficult to share code in PPT,
 We start with trimming the data we just saw.
