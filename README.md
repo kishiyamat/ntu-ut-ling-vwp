@@ -261,8 +261,7 @@ Anyway, we can make new functions using this syntax.
 
 ## Getting data from file name
 
-Let's make a function for the analysis.
-It is going to be the first step.
+Let's create another function for the analysis.
 
 ```R
 getDataFrameFromFileName <- function(file_name){
@@ -285,7 +284,13 @@ head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"),1)
 
 ```
 
+### What is a DataFrame in R?
+
+***Table***
+
 ???
+Let's create another function for the analysis.
+It is going to be the first step.
 here, I'd like to get a data from file name.
 but I don't want to repeat calling `read.table`
 because it requires some arguments.
@@ -450,16 +455,10 @@ So far, we have...
 
 ## Aggregate
 
-Before moving on the next step,
-I'd like to make sure that
-everyone feel confortable with a function named `aggregate`.
-
 Aggregate is a function in base R.
 It aggregates the inputted data.frame (`x`),
 1. making sub-data.frames (subset) defined by the `by` input parameter.
 1. applying a function specified by the `FUN` parameter to each column of the subset
-
----
 
 Let's say we have a refined data, applying two functions.
 
@@ -467,33 +466,29 @@ Let's say we have a refined data, applying two functions.
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 refined_data = reduceRawDataFrame(raw) 
 head(refined_data)
-> head(refined_data,10)
+> head(refined_data,5)
    ParticipantName SegmentName FixationIndex GazeEventType GazeEventDuration
 1              P05   Segment 1             1       Saccade                63
 2              P05   Segment 1             1       Saccade                63
 3              P05   Segment 1             1       Saccade                63
 5              P05   Segment 1             2       Saccade                10
 6              P05   Segment 1             2       Saccade                10
-7              P05   Segment 1             2       Saccade                10
-9              P05   Segment 1             3       Saccade                63
-10             P05   Segment 1             3       Saccade                63
-11             P05   Segment 1             3       Saccade                63
-12             P05   Segment 1             3       Saccade                63
    FixationPointX FixationPointY Timestamp
 1              -1             -1         0
 2              -1             -1         1
 3              -1             -1         5
 5              -1             -1        11
 6              -1             -1        15
-7              -1             -1        18
-9              -1             -1        25
-10             -1             -1        28
-11             -1             -1        31
-12             -1             -1        35
 ```
 
+???
+Before moving on the next step,
+I'd like to make sure that
+everyone feel confortable with a function named `aggregate`.
 
 ---
+
+### Aggregate Example
 
 Now, we are want to make it clear when the saccade/fixation starts and ends
 1. find earliest timestamp in the event
@@ -515,6 +510,7 @@ Let's see if it works.
 
 ---
 
+### Aggregate Example
 
 ```R
 min_table <- aggregate(
@@ -544,10 +540,6 @@ nrow(refined_data)
 
 ---
 
-Using the function `aggregate`, we could get `GazeStart`
-After gettin `GazeStart` and `GazeEnd`,
-We are goin to extract them and append them to the data.
-
 ## Adding when a saccade/fixation starts/ends
 
 Using `aggregate`, we are going to ...
@@ -557,48 +549,58 @@ Using `aggregate`, we are going to ...
     1. find latest timestamp in the event
         -> when the saccade/fixation ends 
 
+Using the function `aggregate`, we could get `GazeStart`
+After gettin `GazeStart` and `GazeEnd`,
+We are goin to extract them and append them to the data.
+
 ```R
 head(refined_data)
-addGazeFlag <- function(refined_data){
-    # when the saccade/fixation starts
-    min_table <- aggregate(
-        x = refined_data$Timestamp,
-        by = list(refined_data$ParticipantName, refined_data$SegmentName,
-            refined_data$FixationIndex,refined_data$GazeEventType,
-            refined_data$GazeEventDuration,
-            refined_data$FixationPointX, refined_data$FixationPointY),
-        FUN = min
-    )
-    colnames(min_table) <- c("ParticipantName", "SegmentName", "FixationIndex",
-        "GazeEventType", "GazeEventDuration", "FixationPointX", "FixationPointY", "GazeStart")
-    min_table <- min_table[order(min_table$ParticipantName,
-        min_table$SegmentName, min_table$GazeStart),]
-
-    # when the saccade/fixation ends
-    max_table <- aggregate(
-        x = refined_data$Timestamp,
-        by = list(refined_data$ParticipantName, refined_data$SegmentName,
-        refined_data$FixationIndex,
-        refined_data$GazeEventType, refined_data$GazeEventDuration,
+# when the saccade/fixation starts
+min_table <- aggregate(
+    x = refined_data$Timestamp,
+    by = list(refined_data$ParticipantName, refined_data$SegmentName,
+        refined_data$FixationIndex,refined_data$GazeEventType,
+        refined_data$GazeEventDuration,
         refined_data$FixationPointX, refined_data$FixationPointY),
-        FUN = max
-    )
-    colnames(max_table) <- c("ParticipantName", "SegmentName", "FixationIndex",
-        "GazeEventType", "GazeEventDuration", "FixationPointX", "FixationPointY", "GazeEnd")
-    max_table <- max_table[order(max_table$ParticipantName,
-        max_table$SegmentName, max_table$GazeEnd),]
+    FUN = min
+)
+colnames(min_table) <- c("ParticipantName", "SegmentName", "FixationIndex",
+    "GazeEventType", "GazeEventDuration", "FixationPointX", "FixationPointY", "GazeStart")
+min_table <- min_table[order(min_table$ParticipantName,
+    min_table$SegmentName, min_table$GazeStart),]
 
-    # conbine min_table(GazeStart) and max_table(GazeEnd)
-    # it is in the 8th column
-    data_with_gaze_flag <- cbind(min_table, max_table[,8])
+# when the saccade/fixation ends
+max_table <- aggregate(
+    x = refined_data$Timestamp,
+    by = list(refined_data$ParticipantName, refined_data$SegmentName,
+    refined_data$FixationIndex,
+    refined_data$GazeEventType, refined_data$GazeEventDuration,
+    refined_data$FixationPointX, refined_data$FixationPointY),
+    FUN = max
+)
+colnames(max_table) <- c("ParticipantName", "SegmentName", "FixationIndex",
+    "GazeEventType", "GazeEventDuration", "FixationPointX", "FixationPointY", "GazeEnd")
+max_table <- max_table[order(max_table$ParticipantName,
+    max_table$SegmentName, max_table$GazeEnd),]
 
-    colnames(data_with_gaze_flag) <- c("ParticipantName", "SegmentName", "FixationIndex",
-        "GazeEventType", "GazeEventDuration",
-        "FixationPointX", "FixationPointY",
-        "GazeStart", "GazeEnd")
 
-    return(data_with_gaze_flag)
-}
+```
+
+---
+
+
+```R
+
+# conbine min_table(GazeStart) and max_table(GazeEnd)
+# it is in the 8th column
+data_with_gaze_flag <- cbind(min_table, max_table[,8])
+
+colnames(data_with_gaze_flag) <- c("ParticipantName", "SegmentName", "FixationIndex",
+    "GazeEventType", "GazeEventDuration",
+    "FixationPointX", "FixationPointY",
+    "GazeStart", "GazeEnd")
+
+return(data_with_gaze_flag)
 data_with_gaze_flag = addGazeFlag(refined_data)
 head(data_with_gaze_flag)
 
@@ -618,6 +620,8 @@ head(data_with_gaze_flag)
 69            927            449       215     368
 ```
 
+---
+
 So far, we have ... 
 1. [got data frame from file name](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/feature-taiwan-setup/script/data-trimming.md#getting-data-from-file-name)
    * [how to make functions](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/feature-taiwan-setup/script/data-trimming.md#making-some-functions)
@@ -625,6 +629,8 @@ So far, we have ...
    * [what are data frames?]()
 1. [made it clear when the fixation begins and ends](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/feature-taiwan-setup/script/data-trimming.md#adding-when-a-saccadefixation-startsends)
    * [what is the function *aggregate*?](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/feature-taiwan-setup/script/data-trimming.md#aggregate)
+
+---
 
 ## Extracting information from E-Prime
 
@@ -641,6 +647,8 @@ extractStudioEventDataList = function(file_name) {
     return(list_of_eventdata)
 }
 ```
+
+---
 
 ## Adding the extracted information
 
@@ -670,6 +678,8 @@ We are going to apply the functions we made
 for each files in the list.
 So, We need to make a list of files.
 
+---
+
 ## List of files
 
 We need to make a list of files,
@@ -697,6 +707,20 @@ if (length(data_list) == 0){
     print('loaded')
 }
 ```
+
+---
+
+```R
+head(data_list) 
+# 結果をプリント
+
+
+```
+
+We are assuming that there's no trial without fixation.
+We need to check if the file has at least one fixation.
+
+---
 
 ### filter out files without fixation
 
@@ -729,6 +753,8 @@ filterOutBadTrials = function(data_list){
 filtered_data_list = filterOutBadTrials(data_list)
 ```
 
+---
+
 ## Main part
 ## integrate data in each segment and participants
 
@@ -748,7 +774,12 @@ We are going to append the formatted data to the variable `data_all`
 getwd()
 setwd("/home/kishiyama/home/thesis/ntu-ut-ling-vwp/result")
 setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
+```
 
+---
+
+
+```R
 data_all <- NULL
 
 # make sure the number of columns which we let E-primesend to Tobi
@@ -776,6 +807,8 @@ for(i in 1:length(filtered_data_list)){
 
 ```
 
+---
+
 ## Mapping x y coordiante to AOI
 1. the area where they focused (AOI)
 
@@ -801,7 +834,11 @@ data_all$AOI <- ifelse(data_all$FixationPointX >= 960 & data_all$FixationPointX 
     & data_all$FixationPointY >= 540 & data_all$FixationPointY < 1080,
     4,
     data_all$AOI)
+```
 
+---
+
+```R
 # extract Fixation
 data_with_fixation <-data_all[data_all$GazeEventType == "Fixation",]
 
@@ -829,56 +866,34 @@ table(data_with_fixation$ParticipantName, data_with_fixation$SegmentName)
 1. the condition of the trial (Condition)
 1. the item in the trial (ItemNo)
 
+---
+
 ```R
 # before
   ParticipantName SegmentName SegmentStart SegmentEnd SegmentDuration
 1             P05   Segment 1        51212      61655           10443
 2             P05   Segment 1        51212      61655           10443
-3             P05   Segment 1        51212      61655           10443
-4             P05   Segment 1        51212      61655           10443
-5             P05   Segment 1        51212      61655           10443
-6             P05   Segment 1        51212      61655           10443
   RecordingTimestamp  StudioEvent StudioEventData FixationIndex SaccadeIndex
 1              51212 SceneStarted 1 3 6 d A D C B            NA            1
 2              51213                                         NA            1
-3              51217                                         NA            1
-4              51220                                         NA           NA
-5              51223                                         NA            2
-6              51227                                         NA            2
   GazeEventType GazeEventDuration FixationPointX..MCSpx. FixationPointY..MCSpx.
 1       Saccade                63                     NA                     NA
 2       Saccade                63                     NA                     NA
-3       Saccade                63                     NA                     NA
-4  Unclassified                 3                     NA                     NA
-5       Saccade                10                     NA                     NA
-6       Saccade                10                     NA                     NA
   PupilLeft PupilRight  X
 1        NA         NA NA
 2      1.54       2.42 NA
-3      1.70       2.00 NA
-4      2.14       2.05 NA
-5      1.59       2.05 NA
-6      1.53       2.03 NA
 
 # after
    ParticipantName SegmentName FixationPointX FixationPointY GazeStart GazeEnd
 35             P05  Segment 10           1338            306       443     566
 34             P05  Segment 10           1338            305       723     886
-41             P05  Segment 10            320            699      1489    1642
-30             P05  Segment 10            505            277      1869    1999
-26             P05  Segment 10            365            199      2042    2219
-25             P05  Segment 10            406            176      2239    2362
    Order List ItemNo Condition AOI1 AOI2 AOI3 AOI4 AOI
 35     1   26     23         c    D    C    A    B   2
 34     1   26     23         c    D    C    A    B   2
-41     1   26     23         c    D    C    A    B   3
-30     1   26     23         c    D    C    A    B   1
-26     1   26     23         c    D    C    A    B   1
-25     1   26     23         c    D    C    A    B   1
-> 
 ```
 
 ---
+
 ### Graphing (10 minutes)
 [data visualizing](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/master/script/data-visualizing.md)
 
