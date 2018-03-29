@@ -1,6 +1,8 @@
-# Data trimming and analysis
+# [Data trimming and analysis](https://kisiyama.github.io/ntu-ut-ling-vwp/)
 Kishiyama
 https://github.com/kisiyama
+
+---
 
 ## 2.2 Analysis using R
 
@@ -10,6 +12,10 @@ https://github.com/kisiyama
 * Opening the data with R
 
 ???
+So far, 
+we downloaded data from Github
+and opened R.
+
 I'd like to use github to do that below,
 because it is quite difficult to share code in PPT,
 We start with trimming the data we just saw.
