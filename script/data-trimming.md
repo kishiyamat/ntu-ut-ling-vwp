@@ -51,17 +51,44 @@ So, what should we do?
 
 ## Making some functions
 
-We want to change how the data frame look like.
-At the same time, we want to apply the change to each file.
-And the number of the files are `33*24=792`.
-Before we apply the change using *for loop*,
-let's see how to make functions.
+We want to change how the data frame looks like,
+but there are some problems.
+1. We have to change a lot.
+1. We need to apply the change to 792 files.`33*24=792`.
 
-### What are functions?
+We can use *loop* to apply the changes to each file,
+but how about the first one?
+We are going to define these functions:
 
+1. getDataFrameFromFileName()
+   -> 3
+1. reduceRawDataFrame()
+   -> 50+
+1. addGazeFlag()
+   -> 40
+1. extractStudioEventDataList()
+   -> 5
+1. addStudioEventDataList()
+   -> 10+
+1. filterOutBadTrials()
+   -> 15
 
-### Why do we make functions?
+and there are more than 100 lines in total.
+If we write every program as one big chunk of statements,
+there must be a lot of problems.
+If we make functions, it allows us to...
 
+1. make our programs as a bunch of sub-steps
+   * When any program seems too hard, just break the overall program into sub-steps.
+1. reuse code instead of rewriting it.
+   * and share some codes with your friend (as Chen-san did).
+1. keep our variable namespace clean.
+   * local variables only "live" as long as the function does.
+1. test small parts of our program in isolation from the rest.
+   * This is especially true in interpreted langaues, such as R, Python, Matlab, and so on.
+
+So I would like to divide the program into separate--but cooperating--functions.
+[Functions](https://www.cs.utah.edu/~germain/PPS/Topics/functions.html)
 
 ### Practice
 
