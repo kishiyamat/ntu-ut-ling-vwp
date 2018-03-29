@@ -5,12 +5,12 @@ https://github.com/kisiyama
 
 ---
 
-## 2.2 Analysis using R
+# Analysis using R
 
-### Data Structure
+## What kind of data can I get from the experiment?
 
-* Downloading data from Github
-* Setting working directory
+* Downloading the data from Github
+* Setting the working directory
 * Opening the data with R <- We are here!
 
 ```R
@@ -26,11 +26,69 @@ head(data_frame)
 So far, 
 we downloaded data from Github
 and opened R.
+
 Then, let's see what kind of data we get.
 First, please make sure you are in the right directory.
+you can check if you are in the correct folder
+using a command getwd().
+if it returns a different folder, please tell me.
 then, assign an example file name to variable `file_name`
 we can use a function `read.table` for variable assignment.
 Then, we can see the first several lines using `head` function.
+
+---
+
+## What kind of data can I get from the experiment?
+
+```tsv
+  ParticipantName SegmentName SegmentStart SegmentEnd SegmentDuration
+1             P05   Segment 1        51212      61655           10443
+2             P05   Segment 1        51212      61655           10443
+3             P05   Segment 1        51212      61655           10443
+4             P05   Segment 1        51212      61655           10443
+5             P05   Segment 1        51212      61655           10443
+6             P05   Segment 1        51212      61655           10443
+  RecordingTimestamp  StudioEvent StudioEventData FixationIndex SaccadeIndex
+1              51212 SceneStarted 1 3 6 d A D C B            NA            1
+2              51213                                         NA            1
+3              51217                                         NA            1
+4              51220                                         NA           NA
+5              51223                                         NA            2
+6              51227                                         NA            2
+  GazeEventType GazeEventDuration FixationPointX..MCSpx. FixationPointY..MCSpx.
+1       Saccade                63                     NA                     NA
+2       Saccade                63                     NA                     NA
+3       Saccade                63                     NA                     NA
+4  Unclassified                 3                     NA                     NA
+5       Saccade                10                     NA                     NA
+6       Saccade                10                     NA                     NA
+  PupilLeft PupilRight  X
+1        NA         NA NA
+2      1.54       2.42 NA
+3      1.70       2.00 NA
+4      2.14       2.05 NA
+5      1.59       2.05 NA
+6      1.53       2.03 NA
+>
+```
+
+???
+if you run the code,
+you will see a data frame with a lot of columns.
+those are what we can get from Tobii.
+We can get this kind of data for each segment in a file.
+But they are not exactly what we need.
+
+We have segment start, segment end, and duration, but it doesn’t make sense.
+we need to manipulate them, so that we can understand them.
+Below them, we can see a column named studio event data.
+We need more information to tell what these character means.
+On the right, we have a column that tells us what kind of Gaze Event Type there were.
+In addition, we can see some logical constants NA.
+
+but those are not what we need. so what kind of data do we want?
+I would like to share some codes to do that,
+but here is a problem.
 
 ---
 
