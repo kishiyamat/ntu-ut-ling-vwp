@@ -219,8 +219,15 @@ So far, we have...
 
 Before moving on the next step,
 I'd like to make sure that
-everyone feel confortable with a function aggregate.
+everyone feel confortable with a function named aggregate.
 
+Aggregate is a function in base R.
+It aggregates the inputted data.frame d.f.
+
+by applying a function specified by the FUN parameter
+to each column of sub-data.frames defined by the by input parameter.
+
+[Aggregate – A Powerful Tool for Data Frame in R](https://www.r-bloggers.com/aggregate-a-powerful-tool-for-data-frame-in-r/)
 
 ### Adding when a saccade/fixation starts/ends
 
