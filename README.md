@@ -1264,11 +1264,10 @@ anova(m00wi, m00woa)
 anova(m00wi, m00woi)
 ```
 
+---
+
+## Misc-tips
 
 ---
 
-### Misc-tips
-
-
-
----
+Thank you!
