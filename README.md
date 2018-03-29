@@ -481,7 +481,7 @@ So we can remove them.
 
 ---
 
-## Let's Run the function definition and check if it works.
+## Let's run the function definition and check if it works.
 
 So far, we have...
 
@@ -515,6 +515,8 @@ and we can see these steps in a function named
 It's too long to paste here.
 But clicking the function name, you can jump to the text file.
 Then, please copy and paste it.
+You can compare the two data-frames,
+and may find that `refined_data` is much simpler.
 
 ---
 
@@ -551,27 +553,63 @@ Before moving on the next step,
 I'd like to make sure that
 everyone feel comfortable with a function named `aggregate`.
 
+Aggregate aggregates the inputted data.frame taking two steps.
+
+It first makes sub-data.frames (OR subset) defined by the `by` input parameter.
+
+And then, it applies a function specified by the `FUN` parameter
+to each column of the subset
+
+Let's say we have a refined data, applying two functions.
+
 ---
 
 ### Aggregate Example
 
-Now, we are want to make it clear when the saccade/fixation starts and ends
-1. find earliest timestamp in the event
+#### **What we need:**
+* When the saccade/fixation starts and ends
+
+#### **Steps we need to take**
+
+1. Finding earliest timestamp in the event
     -> when the saccade/fixation starts
-1. find latest timestamp in the event
+1. Finding latest timestamp in the event
     -> when the saccade/fixation ends 
 
-So, what we need to do is
-1. making sub-data.frames (subset) defined by
-    1. Participant(we don't want to lose this info)
-    1. Segment(we don't want to lose this info)
-    1. FixationIndex
-    1. GazeEventType
-    1. (GazeEventDuration)
-1. applying a function `min`/`max`
-1. ... to Timestamp
+#### what we need to do is
 
-Let's see if it works.
+1. making sub-data.frames (subset) defined by
+    1. participant(we don't want to lose this info)
+    1. segment(we don't want to lose this info)
+    1. fixationindex
+    1. gazeeventtype
+    1. (gazeeventduration)
+1. applying a function `min`/`max`
+1. ... to timestamp
+
+let's see how it works.
+
+???
+
+Now, we want to make it clear when the saccade/fixation starts and ends
+
+Fist, we need to find earliest timestamp in the event.
+that is going to be when the saccade/fixation starts.
+
+Then we can find when the saccade/fixation ends 
+by finding latest timestamp in the event
+
+so, what we need to do is
+1. to make sub-data.frames (subset) defined by
+    1. participant(we don't want to lose this info)
+    1. segment(we don't want to lose this info)
+    1. fixationindex
+    1. gazeeventtype
+    1. (gazeeventduration)
+1. and then apply a function `min`/`max`
+1. ... to timestamp.
+
+let's see how it works.
 
 ---
 
@@ -586,6 +624,15 @@ min_table <- aggregate(
         refined_data$FixationPointX, refined_data$FixationPointY),
     FUN = min
 )
+head(min_table)
+#   Group.1   Group.2 Group.3 Group.4 Group.5 Group.6 Group.7    x
+# 1     P05 Segment 1      33 Saccade       3      -1      -1 7254
+# 2     P05 Segment 1      27 Saccade       7      -1      -1 5421
+# 3     P05 Segment 1       2 Saccade      10      -1      -1   11
+# 4     P05 Segment 1      17 Saccade      10      -1      -1 3237
+# 5     P05 Segment 1      18 Saccade      10      -1      -1 3258
+# 6     P05 Segment 1      16 Saccade      13      -1      -1 3074
+# aggregate applied `min` to the subset of Timestamps.
 # renaming
 colnames(min_table) <- c("ParticipantName", "SegmentName",
     "FixationIndex", "GazeEventType", "GazeEventDuration",
@@ -602,15 +649,26 @@ nrow(min_table)
 nrow(refined_data)
 # [1] 2941
 ```
+???
+We aggregate timestamp by Participant, Segment, FixationIndex,GazeEventType,
+and so forth.
+That makes subset of Timestamp and the function apply a function
+to get the smallest number.
+And that shows when the fixation/saccade starts.
+Then we rename the columns and re-order them.
+
+So, the function aggregated the Timestamp taking two steps.
+It first makes the subset defined by the `by` input parameter.
+And then, it applied a function to get when the event started. 
 
 ---
 
-## Adding when a saccade/fixation starts/ends
+## Adding when a saccade/fixation ends
 
 Using `aggregate`, we are going to ...
 1. make it clear when the fixation starts and ends
     1. find earliest timestamp in the event
-        -> when the saccade/fixation starts
+        -> when the saccade/fixation starts <- We have done!
     1. find latest timestamp in the event
         -> when the saccade/fixation ends 
 
@@ -637,20 +695,26 @@ max_table <- max_table[order(max_table$ParticipantName,
     max_table$SegmentName, max_table$GazeEnd),]
 ```
 
+???
+we will repeat a similar step, adding when a saccade/fixation ends
+
 ---
 
 ## Combining `min_table`(GazeStart) and `max_table`(GazeEnd)
 
 ```R
-# it is in the 8th column
+# GazeEnd is in the 8th column
 data_with_gaze_flag <- cbind(min_table, max_table[,8])
 
 colnames(data_with_gaze_flag) <- c("ParticipantName", "SegmentName", "FixationIndex",
     "GazeEventType", "GazeEventDuration",
     "FixationPointX", "FixationPointY",
     "GazeStart", "GazeEnd")
+```
 
-return(data_with_gaze_flag)
+* [addGazeFlag()]()
+
+```R
 data_with_gaze_flag = addGazeFlag(refined_data)
 head(data_with_gaze_flag)
 
