@@ -29,9 +29,9 @@ and opened a software, R.
 
 Now, let's see what kind of data we get.
 To begin with, please make sure you are in the right directory.
-you can check if you are in the correct folder
+You can check if you are in the correct folder
 using a command getwd().
-if it returns a different folder, please tell me or ask around.
+If it returns a different folder, please tell me or ask around.
 
 Then, we assign a file name of an example file to a variable `file_name`
 In the next line, we can use a function `read.table` for variable assignment.
@@ -70,19 +70,19 @@ for a trial.
 Those are not exactly what we need... 
 
 ???
-if you run the code,
+If you run the code,
 you will see a data frame with a lot of columns.
-those are what we can get from Tobii.
+Those are what we can get from Tobii.
 We can get this kind of data for each segment in a file.
 But they are not exactly what we need.
 
-We have segment start, segment end, and duration, but it doesn’t make sense.
-we need to manipulate them, so that we can understand them.
+We have segment start, segment end, and duration, but it doesn't make sense.
+We need to manipulate them, so that we can understand them.
 Below them, we can see a column named studio event data.
 We need more information to tell what these character means.
 
 So those are not exactly what we were expecting.
-so what kind of data do we want, then?
+So what kind of data do we want, then?
 
 ---
 
@@ -152,7 +152,7 @@ Some problems for organizing the data frame.
 1. Making the data frame simpler
 1. Adding when they start/end their fixation
 1. Extracting studio event from a file
-1. Adding the infomation to the data list
+1. Adding the information to the data list
 
 -> Making functions can be a good way.
 
@@ -217,10 +217,10 @@ But if we make functions, it allows us to...
 1. And we can reuse code instead of rewriting it.
    * and even share some codes with your others
 Two more things.
-1. We can keep our variable namespace clean, bacause local variables only "live" as long as the function does.
+1. We can keep our variable namespace clean, because local variables only "live" as long as the function does.
    * This may not sound like much, but keeping global namespace is important.
 1. Finally, we can test small parts of our program.
-   * This is especially true in interpreted langaues, such as R, Python, Matlab, and so on.
+   * This is especially true in interpreted languages, such as R, Python, Matlab, and so on.
 
 By making functions, I broke the long script into five steps.
 And you can jump to the definition by clicking the name of the functions.
@@ -316,7 +316,7 @@ Then, I would like to...
 1. Rename columns for fixations
 2. Add Timestamps
 3. Remove columns not needed
-4. Extact Fixation and Saccade (other than Unclassified)
+4. Extract Fixation and Saccade (other than Unclassified)
 5. Remove NA
 
 [reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67)
@@ -324,7 +324,7 @@ Then, I would like to...
 ???
 We have a function that returns a raw data frame.
 Now we are going to see how to reduce the data.
-Some columns have long names, so I'll make them shoter.
+Some columns have long names, so I'll make them shorter.
 Then, we can add timestamps which start at the onset of the trial.
 Finally, we can remove some columns we don't need.
 
@@ -365,7 +365,7 @@ head(column_with_timestamp)
 
 ???
 The first part is just renaming some columns.
-By runnig the second part,
+By running the second part,
 new column named Timestamp was appended to the data frame.
 
 ---
@@ -380,7 +380,7 @@ selected_column <- column_with_timestamp[,c("ParticipantName", "SegmentName", "F
     "GazeEventType", "GazeEventDuration", "FixationPointX", "SaccadeIndex", "FixationPointY", "Timestamp")]
 ```
 
-４. [Extacting Fixation and Saccade (other than Unclassified)](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L41-L48)
+４. [Extracting Fixation and Saccade (other than Unclassified)](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L41-L48)
 
 ```R
 selected_column <- selected_column[selected_column$GazeEventType != "Unclassified",]
@@ -444,7 +444,7 @@ So far, we have...
 1. Renamed columns for fixations
 2. Added Timestamps
 3. Removed columns not needed
-4. Extacted Fixation and Saccade (other than Unclassified)
+4. Exacted Fixation and Saccade (other than Unclassified)
 5. Removed NA
 [reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67)
 
@@ -481,7 +481,7 @@ head(refined_data)
 ???
 Before moving on the next step,
 I'd like to make sure that
-everyone feel confortable with a function named `aggregate`.
+everyone feel comfortable with a function named `aggregate`.
 
 ---
 
@@ -495,7 +495,7 @@ Now, we are want to make it clear when the saccade/fixation starts and ends
 
 So, what we need to do is
 1. making sub-data.frames (subset) defined by
-    1. Paticipant(we don't want to lose this info)
+    1. Participant(we don't want to lose this info)
     1. Segment(we don't want to lose this info)
     1. FixationIndex
     1. GazeEventType
@@ -547,8 +547,8 @@ Using `aggregate`, we are going to ...
         -> when the saccade/fixation ends 
 
 Using the function `aggregate`, we could get `GazeStart`
-After gettin `GazeStart` and `GazeEnd`,
-We are goin to extract them and append them to the data.
+After getting `GazeStart` and `GazeEnd`,
+We are going to extract them and append them to the data.
 
 ```R
 head(refined_data)
@@ -571,7 +571,7 @@ max_table <- max_table[order(max_table$ParticipantName,
 
 ---
 
-## Conbining `min_table`(GazeStart) and `max_table`(GazeEnd)
+## Combining `min_table`(GazeStart) and `max_table`(GazeEnd)
 
 ```R
 # it is in the 8th column
@@ -694,7 +694,7 @@ if (length(data_list) == 0){
 
 ```R
 head(data_list) 
-# 結果をプリント
+# print the result
 
 
 ```
@@ -767,7 +767,7 @@ setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
 ```R
 data_all <- NULL
 
-# make sure the number of columns which we let E-primesend to Tobi
+# make sure the number of columns which we let E-prime send to Tobii
 numcol = 8
 i = 1
 for(i in 1:length(filtered_data_list)){
@@ -794,7 +794,7 @@ for(i in 1:length(filtered_data_list)){
 
 ---
 
-## Mapping x y coordiante to AOI
+## Mapping x y coordinate to AOI
 1. the area where they focused (AOI)
 
 ```R
@@ -827,7 +827,7 @@ data_all$AOI <- ifelse(data_all$FixationPointX >= 960 & data_all$FixationPointX 
 # extract Fixation
 data_with_fixation <-data_all[data_all$GazeEventType == "Fixation",]
 
-# remove unneccessary infomation
+# remove unnecessary information
 data_with_fixation$GazeEventDuration <- NULL
 data_with_fixation$StudioEventData <- NULL
 data_with_fixation$FixationIndex <- NULL
@@ -840,7 +840,7 @@ head(data_with_fixation)
 
 table(data_with_fixation$ParticipantName, data_with_fixation$SegmentName)
 
-# savef as csv
+# save as csv
 # write.csv(data_with_fixation, "./csv/output.csv", row.names=F)
 ```
 
@@ -883,7 +883,7 @@ table(data_with_fixation$ParticipantName, data_with_fixation$SegmentName)
 [data visualizing](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/master/script/data-visualizing.md)
 
 
-we are going to see the eye-movements of participants
+We are going to see the eye-movements of participants
 toward the target entity.
 
 1. set up (set wd, import libs, and read data)
@@ -1120,6 +1120,12 @@ if(!require(lmerTest)){install.packages("lmerTest")}
 library(lme4)
 library(reshape)
 
+```
+
+---
+
+```R
+
 data <- read.csv("./output.csv", header =T)
 head(data)
 # check its distribution
@@ -1135,6 +1141,8 @@ data$target <- ifelse(data$AOI == 4, as.character(data$AOI4), data$target)
 
 data <-data[order(data$ParticipantName, data$ItemNo, data$GazeStart),]
 ```
+
+---
 
 1. We want to extract the data in the region we are interested in.
 
@@ -1160,7 +1168,10 @@ head(data)
 #4    177    680
 #5    926   1523
 #6   1220   1603
+```
+---
 
+```R
 data$slapse <- ifelse(data$slapse < 0, 0, data$slapse)
 data$elapse <- ifelse(data$elapse >= span, span, data$elapse)
 
@@ -1189,6 +1200,12 @@ data <-aggregate(
     na.rm=TRUE)
 colnames(data) = c("subj","item","AOI","cond","sum")
 
+```
+
+---
+
+```R
+
 # sort
 data <- data[order(data$subj, data$item),]
 
@@ -1209,6 +1226,11 @@ data2$D<- ifelse(is.na(data2$D), 0, data2$D)
 
 data2$Target <- ifelse((data2$cond == "a" | data2$cond == "b"), data2$C, data2$D)
 head(data2)
+
+```
+---
+
+```R
 
 #  head(data2)
 # # subj item cond   A   B BackGround   C D Target all      logit
@@ -1235,6 +1257,12 @@ data2$aff <- ifelse(data2$cond == "a" | data2$cond == "b", 1, 0)
 # scaling
 data2$npi <- scale(data2$npi, scale=T)
 data2$aff <- scale(data2$aff, scale=T)
+
+```
+
+---
+
+```R
 
 # data2$logit<-data2$logit_c
 tapply(data2$logit, list(data2$npi, data2$aff), mean)
