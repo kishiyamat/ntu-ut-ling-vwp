@@ -7,11 +7,11 @@ https://github.com/kisiyama
 
 # Analysis using R
 
-## What kind of data can I get from the experiment?
+## What kind of data can we get from the experiment?
 
 * Downloading the data from Github
 * Setting the working directory
-* Opening the data with R <- We are here!
+* Opening the data with R <- *We are here!*
 
 ```R
 getwd()
@@ -38,7 +38,7 @@ Then, we can see the first several lines using `head` function.
 
 ---
 
-## What kind of data can I get from the experiment?
+## We can get...
 
 ```tsv
   ParticipantName SegmentName SegmentStart SegmentEnd SegmentDuration
@@ -70,7 +70,11 @@ Then, we can see the first several lines using `head` function.
 5      1.59       2.05 NA
 6      1.53       2.03 NA
 >
+nrow(data_frame)
+> [1] 3135
 ```
+for a trial.
+Those are not exactly what we need... 
 
 ???
 if you run the code,
@@ -87,8 +91,6 @@ On the right, we have a column that tells us what kind of Gaze Event Type there 
 In addition, we can see some logical constants NA.
 
 but those are not what we need. so what kind of data do we want?
-I would like to share some codes to do that,
-but here is a problem.
 
 ---
 
@@ -108,8 +110,6 @@ To investigate the eye-movements, we need at least
 1. the condition of the trial (Condition)
 1. the item in the trial (ItemNo)
 
----
-
 And they will look like this at the end:
 
 ```csv
@@ -120,8 +120,34 @@ And they will look like this at the end:
 "P05","Segment 1",417,256,615,801,"1","3","6","d","A","D","C","B",1
 "P05","Segment 1",424,181,831,1048,"1","3","6","d","A","D","C","B",1
 ```
+???
+We have seen a raw data set,
+but it is not ready to be analyzed.
+
+To investigate the eye-movements, we need these information.
+We need
+1. We have four areas, and we need to know which 
+area they focused on.
+1. we also need to know the content on the area of interest.
+1. Information about time is also important to know when they focused on the area (GazeStart, GazeEnd)
+When we analyze the data, we need to know who participated in the experiment, and which condition the trial is, and which item was used in the trial.
+
+And they will look like this at the end:
 
 ---
+By contrast, as we have seen, the outputs from Tobii have
+
+1. x y coordinate of the gaze event
+    * but not AOI information
+    > we need to specify the AOI from the coordinates
+1. time stamp from the onset of the trial
+    * but not the exact time when they focused on the area (GazeStart, GazeEnd)
+1. mixed information of the gaze event type 
+    * not only fixation but also saccade and unclassified
+1. information from E-Prime(StudioEvent)
+    * somehow we need to retrieve it from the row.
+
+???
 By contrast, as we have seen, the outputs from Tobii have
 
 1. x y coordinate of the gaze event
