@@ -241,7 +241,7 @@ table(data_with_fixation$ParticipantName, data_with_fixation$SegmentName)
 reduceRawDataFrame <- function(raw){
     # 1. Renaming two columns for fixations
     # just selecting. "X.U.FEFF.ParticipantName" for Win. "ParticipantName" for Mac/Linux.
-    selected_column <- raw[,c("X.U.FEFF.ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
+    selected_column <- raw[,c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
         "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
         "FixationPointX..MCSpx.", "FixationPointY..MCSpx.", "PupilLeft", "PupilRight")]
     # renaming some of them
