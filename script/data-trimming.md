@@ -4,6 +4,7 @@
 
 We have seen a raw data set,
 but it is not ready to be analyzed.
+
 To investigate the eye-movements, we need at least
 
 1. the area where they focused (AOI)
@@ -24,7 +25,7 @@ And they will look like this at the end:
 "P05","Segment 1",424,181,831,1048,"1","3","6","d","A","D","C","B",1
 ```
 
-By contrast, the outputs from Tobii have
+By contrast, as we have seen, the outputs from Tobii have
 
 1. x y coordinate of the gaze event
     * but not AOI information
