@@ -427,9 +427,6 @@ refined_column <- selected_column
 | NULL  | null | NULL |is.null()|
 | Inf |  Infinity | 1/0 |is.infinite()|
 
-```R
-```
-
 ???
 Then We deal with the NA.
 
@@ -556,19 +553,7 @@ We are goin to extract them and append them to the data.
 ```R
 head(refined_data)
 # when the saccade/fixation starts
-min_table <- aggregate(
-    x = refined_data$Timestamp,
-    by = list(refined_data$ParticipantName, refined_data$SegmentName,
-        refined_data$FixationIndex,refined_data$GazeEventType,
-        refined_data$GazeEventDuration,
-        refined_data$FixationPointX, refined_data$FixationPointY),
-    FUN = min
-)
-colnames(min_table) <- c("ParticipantName", "SegmentName", "FixationIndex",
-    "GazeEventType", "GazeEventDuration", "FixationPointX", "FixationPointY", "GazeStart")
-min_table <- min_table[order(min_table$ParticipantName,
-    min_table$SegmentName, min_table$GazeStart),]
-
+# we already have min_table
 # when the saccade/fixation ends
 max_table <- aggregate(
     x = refined_data$Timestamp,
@@ -582,16 +567,13 @@ colnames(max_table) <- c("ParticipantName", "SegmentName", "FixationIndex",
     "GazeEventType", "GazeEventDuration", "FixationPointX", "FixationPointY", "GazeEnd")
 max_table <- max_table[order(max_table$ParticipantName,
     max_table$SegmentName, max_table$GazeEnd),]
-
-
 ```
 
 ---
 
+## Conbining `min_table`(GazeStart) and `max_table`(GazeEnd)
 
 ```R
-
-# conbine min_table(GazeStart) and max_table(GazeEnd)
 # it is in the 8th column
 data_with_gaze_flag <- cbind(min_table, max_table[,8])
 
@@ -752,6 +734,9 @@ filterOutBadTrials = function(data_list){
 
 filtered_data_list = filterOutBadTrials(data_list)
 ```
+### What is a for loop?
+
+usefulness.
 
 ---
 
@@ -894,7 +879,7 @@ table(data_with_fixation$ParticipantName, data_with_fixation$SegmentName)
 
 ---
 
-### Graphing (10 minutes)
+### Graphing
 [data visualizing](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/master/script/data-visualizing.md)
 
 
@@ -923,6 +908,10 @@ data_all <- read.csv("./output.csv", header =T)
 summary(data_all)
 head(data_all)
 ```
+### require vs. library
+
+
+---
 
 1. digitalize the data
 
@@ -946,9 +935,13 @@ for (i in 1:length(pol_n2)){
         data_all$GazeEnd > (span_begin + i * 20)),
         1,
         0)}
-
 # combine the binary data with all data
 gr <- cbind(data_all, as.data.frame(binary_data))　
+```
+
+---
+
+```R
 
 # AOIs has numbers . see the content in the AOI.
 gr$Target <- ifelse(gr$AOI == 1, as.character(gr$AOI1), "BackGround")
@@ -964,6 +957,12 @@ head(gr)
 gr2 <- melt(gr,id=c("ParticipantName", "ItemNo", "Condition", "AOI", "Target"))
 gr2$variable <- as.numeric(as.character(gr2$variable))
 gr2 <- gr2[order(gr2$ParticipantName, gr2$ItemNo),]
+
+```
+
+---
+
+```R
 
 # in the recording of Tobii, count 1 if the AOI is seen in the 20m
 # this causes many duplicates bacause of counting 0 for other AOIs.
@@ -984,6 +983,11 @@ head(gr3)
 gr.temp <- cast(gr3)
 head(gr.temp)
 
+```
+
+---
+
+```R
 # N1_V1_t :A
 # N1_V1_f :B
 # N2_V1_t :C
@@ -1012,6 +1016,12 @@ gr.temp$w <- ifelse((gr.temp$cond == "a" | gr.temp$cond == "b"), gr.temp$D, gr.t
 gr.temp$cn1 <- ifelse((gr.temp$cond == "a" | gr.temp$cond == "b"), gr.temp$A, gr.temp$B)
 gr.temp$wn1 <- ifelse((gr.temp$cond == "a" | gr.temp$cond == "b"), gr.temp$B, gr.temp$A)
 
+```
+
+---
+
+```R
+
 #aggregate for graph (Use t1~t4)
 gra <- aggregate(
     gr.temp$c,
@@ -1036,6 +1046,12 @@ gra$cond=
         "c"="NPI+AFF-:(sika->nai)",
         "d"="NPI-AFF-:(dake->nai)")
     )
+
+```
+
+---
+
+```R
 
 # make a graph
 d = data.frame(t = c(4100, 4700 , 5500),
@@ -1071,7 +1087,7 @@ dev.off()
 
 ---
 
-### LME (10 minutes)
+### LME 
 [data analyzing](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/master/script/data-analyzing.md)
 
 1.  if(!require(<name>)){install.packages("<name>")}
@@ -1098,10 +1114,9 @@ if(!require(knitr)){install.packages("knitr")}
 if(!require(beepr)){install.packages("beepr")}
 if(!require(lmerTest)){install.packages("lmerTest")}
 # if(!require(magrittr)){install.packages("magrittr")}
-if(!require(devtools)){install.packages("devtools")}
-install_github("kisiyama/mudball",ref="master",force=TRUE)
-require(mudball)
-
+# if(!require(devtools)){install.packages("devtools")}
+# install_github("kisiyama/mudball",ref="master",force=TRUE)
+# require(mudball)
 library(lme4)
 library(reshape)
 
@@ -1265,7 +1280,9 @@ anova(m00wi, m00woi)
 
 ---
 
-## Misc-tips
+## Review
+
+* Github is great. 
 
 ---
 
