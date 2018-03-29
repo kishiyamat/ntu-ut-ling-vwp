@@ -282,18 +282,29 @@ head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"),1)
 1       Saccade                63                     NA                     NA
   PupilLeft PupilRight  X
 1        NA         NA NA
+
 ```
 
 ???
-> here, I'd like to get a data from file name.
-> but I don't want to repeat calling `read.table`
-> because it requires some arguments.
-> So, I will make a simple function,
-> so that we can read the data frame with a line.
+here, I'd like to get a data from file name.
+but I don't want to repeat calling `read.table`
+because it requires some arguments.
+So, I will make a simple function,
+so that we can read the data frame with a line.
+
+I used `getDataFrameFromFileName` for its name.
+if you are in the correct directory,
+you can read data frame from the name.
 
 ---
 
 ## Reducing data frame
+
+1. [getDataFrameFromFileName()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L3-L7)
+1. [reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67) <- We are here!
+1. [addGazeFlag()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L69-L108)
+1. [extractStudioEventDataList()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L110-L116)
+1. [addStudioEventDataList()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L118-L133)
 
 Then, I would like to...
 
@@ -305,14 +316,20 @@ Then, I would like to...
 
 [reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67)
 
+???
+We have a function that returns a raw data frame.
+Now we are going to see how to reduce the data.
+Some columns have long names, so I'll make them shoter.
+Then, we can add timestamps which start at the onset of the trial.
+Finally, we can remove some columns we don't need.
+
 ---
 
 ```R
-# We assign the data frame to `raw` for checking.
-# We can check the contents using `head` function.
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
-
-# 1. Renaming two columns for fixations
+```
+1. Renaming two columns for fixations
+```R
 # just selecting 
 selected_column <- raw[,c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
     "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
@@ -325,33 +342,41 @@ colnames(selected_column) <- c("ParticipantName", "SegmentName", "SegmentStart",
 renamed_column <- selected_column
 ```
 
----
+2. Adding Timestamps
 
 ```R
-# 2. Adding Timestamps
 # I would like to add Timestamps as new column
 # run the code before explaining it
 column_with_timestamp <- NULL
 renamed_column$Timestamp <- renamed_column$RecordingTimestamp - renamed_column$SegmentStart
 column_with_timestamp <- renamed_column
-# head(column_with_timestamp)
+head(column_with_timestamp)
 # SegmentStart is the  onset of trial(51212)
 # SegmentEnd is the offset of trial(61655)
 # RecordingTimestamp is the recording points(51212 to 61655)
 # Therefore, Timestamp -> 0 (51212-51212) to 10443(61655-51212)
 ```
 
+???
+The first part is just renaming some columns.
+By runnig the second part,
+new column named Timestamp was appended to the data frame.
+
 ---
 
+3. Removing columns not needed
+
 ```R
-# 3. Removing columns not needed
 # now we don't need some of them.
 # because we have timestamp now.
 # ~~SegmantStart, SegmentEnd, SegmentDuration, RecordingTimestamp, PupilLeft, PupilRight~~
 selected_column <- column_with_timestamp[,c("ParticipantName", "SegmentName", "FixationIndex",
     "GazeEventType", "GazeEventDuration", "FixationPointX", "SaccadeIndex", "FixationPointY", "Timestamp")]
+```
 
-# 4. Extacting Fixation and Saccade (other than Unclassified)
+4. Extacting Fixation and Saccade (other than Unclassified)
+
+```R
 selected_column <- selected_column[selected_column$GazeEventType != "Unclassified",]
 # Now, if FixationIndex is an NA,
 # the data in the row is about saccade.
@@ -361,6 +386,9 @@ selected_column$FixationIndex <- ifelse(is.na(selected_column$FixationIndex),
     selected_column$FixationIndex)
 
 ```
+
+???
+
 
 ---
 
