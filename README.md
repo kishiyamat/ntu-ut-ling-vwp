@@ -15,11 +15,12 @@ https://github.com/kisiyama
 
 ```R
 getwd()
-# setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
+setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
 file_name <- "npi_2017_New test_Rec 05_Segment 1.tsv"
 data_frame <- read.table(file_name, head=T, sep="\t",
     na.string="NA", encoding="UTF-8")
-head(data_frame)
+class(data_frame)
+# [1] "data.frame"
 ```
 
 ???
@@ -33,15 +34,23 @@ You can check if you are in the correct folder
 using a command getwd().
 If it returns a different folder, please tell me or ask around.
 
-Then, we assign a file name of an example file to a variable `file_name`
+Then, we assign a file name of an example file to a variable `file_name`.
+
 In the next line, we can use a function `read.table` for variable assignment.
+
 Then, we can see the first several lines using `head` function.
+
+In the last line, you cans see a function `class`.
+And it returns the class of inputted variable.
+In this case, data frame. A kind of table.
 
 ---
 
 ## We can get...
 
-```tsv
+```R
+head(data_frame)
+
   ParticipantName SegmentName SegmentStart SegmentEnd SegmentDuration
 1             P05   Segment 1        51212      61655           10443
 2             P05   Segment 1        51212      61655           10443
@@ -66,7 +75,6 @@ Then, we can see the first several lines using `head` function.
 nrow(data_frame)
 > [1] 3135
 ```
-for a trial.
 Those are not exactly what we need... 
 
 ???
@@ -76,11 +84,8 @@ Those are what we can get from Tobii.
 We can get this kind of data for each segment in a file.
 But they are not exactly what we need.
 
-We have segment start, segment end, and duration, but it doesn't make sense.
-We need to manipulate them, so that we can understand them.
-Below them, we can see a column named studio event data.
-We need more information to tell what these character means.
-
+We have segment start, segment end, and duration, but 
+what we need is timestamps which starts from 0. 
 So those are not exactly what we were expecting.
 So what kind of data do we want, then?
 
@@ -96,7 +101,6 @@ but it is not ready to be analyzed.
 To investigate the eye-movements, we need at least
 
 1. the area where they focused (AOI)
-1. the content on the area of interest (AOI1,AOI2,...)
 1. the time when they focused on the area (GazeStart, GazeEnd)
 1. the information about the participants (ParticipantName)
 1. the condition of the trial (Condition)
@@ -122,24 +126,26 @@ We have seen a raw data set,
 but it is not ready to be analyzed.
 
 To investigate the eye-movements, we need these information.
-1. We have four areas, and we need to know which 
-area they focused on.
-1. we also need to know the content on the area of interest.
-1. Information about time is also important to know when they focused on the area (GazeStart, GazeEnd)
-When we analyze the data, we need to know who participated in the experiment, 
-and which condition the trial is, and which item was used in the trial.
+1. We have seen four pictures, and we need to know which 
+picture they focused on.
+1. Information about time is also important to know when they focused on the picture (GazeStart, GazeEnd)
+In addition, when it comes to analyzing the data, we need to know
+who took part in the experiment, 
+which condition the trial is,
+and which item was used in the trial.
 
-So, we need to make some changes on the raw data set.
-Let's say we want to know the area they focused on.
-But the data from tobii doesn't have AOI information
-so somehow, we need to specify the AOI from the coordinates
-and there are many changes we need to make.
+So, we need to make some changes on the raw dataset we saw.
+Let's say we want to know the picture they focused on.
+But the data from tobii doesn't have information about that.
+So somehow, we need to specify the area of interest
+from the co'ordinates.
 
-So, what should we do?
+In addition, there are many changes we need to make.
+So, what should we do to organize the data?
 
 ---
 
-## What should we do?
+## What should we do to organize the data?
 
 Some problems for organizing the data frame.
 
@@ -157,7 +163,7 @@ Some problems for organizing the data frame.
 -> Making functions can be a good way.
 
 ???
-We want to change how the data frame looks like,
+We want to change how the data-frame looks like,
 but there are some problems.
 
 We have to change a lot, and
@@ -166,13 +172,18 @@ we need to apply the changes over and over.
 We can use *for loop* to apply the changes to each file
 so the second one is not a big deal.
 but how about the first one?
-We have to...
-1. get a data frame from a filenames
-1. make the data frame smaller
-1. add some timestamps when they start and end their fixation
-1. extract and add studio event data from a file
 
-Making functions can be a good way.
+We have to...
+
+1. get a data-frame from a filename
+1. make the data-frame smaller.
+
+Plus, 
+
+1. we need timestamps that indicate when they start and end their fixation
+1. we need to extract and add some outputs from E-Prime
+
+In this case, making functions can be a good way.
 
 ---
 
@@ -209,18 +220,18 @@ So I would like to divide the program into separate--but cooperating--functions.
 ???
 So why should we make functions?
 
-If we write every program as one big chunk of statements,
+If we write every script as "one big chunk" of statements,
 there must be a lot of problems.
-But if we make functions, it allows us to...
-1. make our programs as a bunch of sub-steps
-   * So, we can break the long program into sub-steps, when they seem tough, 
+
+But if we make functions, that allows us to...
+1. write our codes as a bunch of sub-steps instead of a big chunk.
+   * So, we can break the long script into sub-steps.
 1. And we can reuse code instead of rewriting it.
-   * and even share some codes with your others
+   * and even share some codes with others
 Two more things.
-1. We can keep our variable namespace clean, because local variables only "live" as long as the function does.
-   * This may not sound like much, but keeping global namespace is important.
-1. Finally, we can test small parts of our program.
-   * This is especially true in interpreted languages, such as R, Python, Matlab, and so on.
+1. We can keep namespaces for variable clean. That is because local variables in function definition only "live" inside of the definition. 
+   * This may not sound like much, but keeping namespace clean is important.
+1. Finally, we can test small parts of our program instantly.
 
 By making functions, I broke the long script into five steps.
 And you can jump to the definition by clicking the name of the functions.
@@ -231,11 +242,13 @@ And you can jump to the definition by clicking the name of the functions.
 
 ```R
 doubleMe <- function(argument){
+    # local variable
     doubled_argument = argument * 2
     return((doubled_argument)) 
 }
 a = doubleMe(4)
 print(a)
+# local variable
 print(doubled_argument)
 ```
 
@@ -248,13 +261,15 @@ To make a function, you need:
 
 ???
 We can create a new function using `function`.
-Let's say we want a function which double the input.
-In that case, we can do that in this way.
+Let's say we create a function which doubles the input.
+In this case, it takes an argument,
+and then doubles it, and assing the result
+to a local variable `doubled_argument`.
 Using a keyword `return`, we can specify the output of the function.
-So, we can use the function like this.
 
-As I mentioned, variable in the definition is not in the global scope.
+Variable in the definition is not in the global scope.
 So we can't print the `doubled_argument` outside of the local scope.
+This allows us to keep the global namespase clean.
 Anyway, we can make new functions using this syntax.
 
 ---
@@ -273,6 +288,8 @@ getwd()
 # set dir to `result`
 setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
 head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"),1)
+# Does this work? The outputs will be like this:
+
   ParticipantName SegmentName SegmentStart SegmentEnd SegmentDuration
 1             P05   Segment 1        51212      61655           10443
   RecordingTimestamp  StudioEvent StudioEventData FixationIndex SaccadeIndex
@@ -289,17 +306,20 @@ head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"),1)
 ***Table***
 
 ???
-Let's create another function for the analysis.
-It is going to be the first step.
-here, I'd like to get a data from file name.
-but I don't want to repeat calling `read.table`
-because it requires some arguments.
+Let's create another function.
+It is going to be the first step we saw.
+here, I'd like to get a data-frame from a file name.
+but I don't want to repeat calling a function `read.table`
+because we need to specify a lot of arguments.
+
 So, I will make a simple function,
 so that we can read the data frame with a line.
 
 I used `getDataFrameFromFileName` for its name.
 if you are in the correct directory,
 you can read data frame from the name.
+
+Please copy and paste. and see if it works.
 
 ---
 
@@ -319,14 +339,18 @@ Then, I would like to...
 4. Extract Fixation and Saccade (other than Unclassified)
 5. Remove NA
 
+For Windows:
 [reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67)
+For MacOS/Linux
+[reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L241-L299)
 
 ???
-We have a function that returns a raw data frame.
+We have one function that returns a raw data frame from a file name.
+
 Now we are going to see how to reduce the data.
 Some columns have long names, so I'll make them shorter.
-Then, we can add timestamps which start at the onset of the trial.
-Finally, we can remove some columns we don't need.
+Then, we add timestamps which start at the onset of the trial.
+Finally, we remove some columns we don't need.
 
 ---
 
@@ -336,7 +360,11 @@ raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 １. [Renaming two columns for fixations](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L10-L20)
 
 ```R
-# just selecting 
+# for Windows
+selected_column <- raw[,c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
+    "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
+    "FixationPointX..MCSpx.", "FixationPointY..MCSpx.", "PupilLeft", "PupilRight")]
+# for Mac/Linux
 selected_column <- raw[,c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
     "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
     "FixationPointX..MCSpx.", "FixationPointY..MCSpx.", "PupilLeft", "PupilRight")]
@@ -356,7 +384,11 @@ renamed_column <- selected_column
 column_with_timestamp <- NULL
 renamed_column$Timestamp <- renamed_column$RecordingTimestamp - renamed_column$SegmentStart
 column_with_timestamp <- renamed_column
-head(column_with_timestamp)
+head(column_with_timestamp, 3)
+#   FixationPointX FixationPointY PupilLeft PupilRight Timestamp
+# 1             NA             NA        NA         NA         0
+# 2             NA             NA      1.54       2.42         1
+# 3             NA             NA      1.70       2.00         5
 # SegmentStart is the  onset of trial(51212)
 # SegmentEnd is the offset of trial(61655)
 # RecordingTimestamp is the recording points(51212 to 61655)
@@ -364,7 +396,11 @@ head(column_with_timestamp)
 ```
 
 ???
+Before starting, we get raw data using the function we made.
+
 The first part is just renaming some columns.
+FixationPointX and Y has something we don't need, so I just removed them.
+
 By running the second part,
 new column named Timestamp was appended to the data frame.
 
@@ -373,8 +409,7 @@ new column named Timestamp was appended to the data frame.
 ３. [Removing columns not needed](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L34-L39)
 
 ```R
-# now we don't need some of them.
-# because we have timestamp now.
+# Now we don't need some of them, because we have timestamp.
 # ~~SegmantStart, SegmentEnd, SegmentDuration, RecordingTimestamp, PupilLeft, PupilRight~~
 selected_column <- column_with_timestamp[,c("ParticipantName", "SegmentName", "FixationIndex",
     "GazeEventType", "GazeEventDuration", "FixationPointX", "SaccadeIndex", "FixationPointY", "Timestamp")]
@@ -418,7 +453,7 @@ refined_column <- selected_column
 
 ```
 
-### [What it NA?](https://qiita.com/Qiita/items/c686397e4a0f4f11683d)
+### [What it an NA?](https://qiita.com/Qiita/items/c686397e4a0f4f11683d)
 
 | Value | Stand for | Example | Boolean |
 |:--------:|:--------:|:--------:|:--------:|
@@ -429,24 +464,35 @@ refined_column <- selected_column
 
 ???
 Then We deal with the NA.
+NAs are data which are not available.
+So we can remove them.
 
 ---
 
-# Running the function definition and check if it works.
+## Let's Run the function definition and check if it works.
+
+So far, we have...
+１. [Renamed two columns for fixations](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L10-L20)
+２. [Added Timestamps](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L22-L32)
+３. [Removed columns not needed](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L34-L39)
+４. [Extracted Fixation and Saccade (other than Unclassified)](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L41-L48)
+５. [Removed NA](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L50-L64)
+
+*[reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67)*
+
 ```R
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 refined_data = reduceRawDataFrame(raw) 
 head(raw)
 head(refined_data)
 ```
-
-So far, we have...
-1. Renamed columns for fixations
-2. Added Timestamps
-3. Removed columns not needed
-4. Exacted Fixation and Saccade (other than Unclassified)
-5. Removed NA
-[reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67)
+???
+To sum up, we took five steps to make the data frame simpler.
+and we can see these steps in a function named
+`reduceRawDataFrame()`.
+It's too long to paste here.
+But clicking the function name, you can jump to the text file.
+Then, please copy and paste it.
 
 ---
 
