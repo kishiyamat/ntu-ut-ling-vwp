@@ -234,7 +234,9 @@ doubleMe <- function(argument){
     doubled_argument = argument * 2
     return((doubled_argument)) 
 }
-doubleMe(4)
+a = doubleMe(4)
+print(a)
+print(doubled_argument)
 ```
 
 To make a function, you need:
@@ -245,19 +247,22 @@ To make a function, you need:
 * Argument(s) if you want.
 
 ???
+We can create a new function using `function`.
+Let's say we want a function which double the input.
+In that case, we can do that in this way.
+Using a keyword `return`, we can specify the output of the function.
+So, we can use the function like this.
 
-
+As I mentioned, variable in the definition is not in the global scope.
+So we can't print the `doubled_argument` outside of the local scope.
+Anyway, we can make new functions using this syntax.
 
 ---
 
 ## Getting data from file name
 
 Let's make a function for the analysis.
-> here, I'd like to get a data from file name.
-> but I don't want to repeat calling `read.table`
-> because it requires some arguments.
-> So, I will make a simple function,
-> so that we can read the data frame with a line.
+It is going to be the first step.
 
 ```R
 getDataFrameFromFileName <- function(file_name){
@@ -265,45 +270,26 @@ getDataFrameFromFileName <- function(file_name){
     na.string="NA", encoding="UTF-8")
     return(data_frame)
 }
-```
-
----
-
-```R
 getwd()
 # set dir to `result`
 setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
-head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"))
+head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"),1)
   ParticipantName SegmentName SegmentStart SegmentEnd SegmentDuration
 1             P05   Segment 1        51212      61655           10443
-2             P05   Segment 1        51212      61655           10443
-3             P05   Segment 1        51212      61655           10443
-4             P05   Segment 1        51212      61655           10443
-5             P05   Segment 1        51212      61655           10443
-6             P05   Segment 1        51212      61655           10443
   RecordingTimestamp  StudioEvent StudioEventData FixationIndex SaccadeIndex
 1              51212 SceneStarted 1 3 6 d A D C B            NA            1
-2              51213                                         NA            1
-3              51217                                         NA            1
-4              51220                                         NA           NA
-5              51223                                         NA            2
-6              51227                                         NA            2
   GazeEventType GazeEventDuration FixationPointX..MCSpx. FixationPointY..MCSpx.
 1       Saccade                63                     NA                     NA
-2       Saccade                63                     NA                     NA
-3       Saccade                63                     NA                     NA
-4  Unclassified                 3                     NA                     NA
-5       Saccade                10                     NA                     NA
-6       Saccade                10                     NA                     NA
   PupilLeft PupilRight  X
 1        NA         NA NA
-2      1.54       2.42 NA
-3      1.70       2.00 NA
-4      2.14       2.05 NA
-5      1.59       2.05 NA
-6      1.53       2.03 NA
->
 ```
+
+???
+> here, I'd like to get a data from file name.
+> but I don't want to repeat calling `read.table`
+> because it requires some arguments.
+> So, I will make a simple function,
+> so that we can read the data frame with a line.
 
 ---
 
