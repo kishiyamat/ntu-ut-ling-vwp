@@ -245,16 +245,30 @@ We are going to define these functions:
 When any program seems too hard,
 we can just break the overall program into sub-steps.
 So, by making functions, I broke the long script into five steps.
-you can see the definition by clicking the name of the functions.
+you can jump to the definition by clicking the name of the functions.
 
 ---
 
 ## Making some functions
 
+### Why do we make functions?
+
 If we write every program as one big chunk of statements,
 there must be a lot of problems.
 If we make functions, it allows us to...
 
+1. make our programs as a bunch of sub-steps
+1. reuse code instead of rewriting it.
+1. keep our variable namespace clean.
+1. test small parts of our program in isolation from the rest.
+
+So I would like to divide the program into separate--but cooperating--functions.
+[Functions](https://www.cs.utah.edu/~germain/PPS/Topics/functions.html)
+
+???
+If we write every program as one big chunk of statements,
+there must be a lot of problems.
+If we make functions, it allows us to...
 1. make our programs as a bunch of sub-steps
    * When any program seems too hard, just break the overall program into sub-steps.
 1. reuse code instead of rewriting it.
@@ -264,10 +278,8 @@ If we make functions, it allows us to...
 1. test small parts of our program in isolation from the rest.
    * This is especially true in interpreted langaues, such as R, Python, Matlab, and so on.
 
-So I would like to divide the program into separate--but cooperating--functions.
-[Functions](https://www.cs.utah.edu/~germain/PPS/Topics/functions.html)
-
 ---
+
 ### Practice
 
 ```R
@@ -285,6 +297,7 @@ To make a function, you need:
 * argument(s) if you want.
 
 ---
+
 ## Getting data from file name
 
 Let's make a function for the analysis.
@@ -303,6 +316,7 @@ getDataFrameFromFileName <- function(file_name){
 ```
 
 ---
+
 ```R
 getwd()
 # set dir to `result`
@@ -340,82 +354,100 @@ head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"))
 ```
 
 ---
+
 ## Reducing data frame
 
-Then, I would like to remove some columns
-to make the problem simpler
-1. Renaming columns for fixations
-2. Adding Timestamps
-3. Removing columns not needed
-4. Extacting Fixation and Saccade (other than Unclassified)
-5. Removing NA
+Then, I would like to...
+
+1. Rename columns for fixations
+2. Add Timestamps
+3. Remove columns not needed
+4. Extact Fixation and Saccade (other than Unclassified)
+5. Remove NA
+
+[reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67)
+
+---
 
 ```R
 # We assign the data frame to `raw` for checking.
 # We can check the contents using `head` function.
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 
-reduceRawDataFrame <- function(raw){
-    # 1. Renaming two columns for fixations
-    # just selecting 
-    selected_column <- raw[,c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
-        "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
-        "FixationPointX..MCSpx.", "FixationPointY..MCSpx.", "PupilLeft", "PupilRight")]
-    # renaming some of them
-    renamed_column <- NULL
-    colnames(selected_column) <- c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
-        "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
-        "FixationPointX", "FixationPointY", "PupilLeft", "PupilRight")
-    renamed_column <- selected_column
+# 1. Renaming two columns for fixations
+# just selecting 
+selected_column <- raw[,c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
+    "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
+    "FixationPointX..MCSpx.", "FixationPointY..MCSpx.", "PupilLeft", "PupilRight")]
+# renaming some of them
+renamed_column <- NULL
+colnames(selected_column) <- c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
+    "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
+    "FixationPointX", "FixationPointY", "PupilLeft", "PupilRight")
+renamed_column <- selected_column
+```
 
-    # 2. Adding Timestamps
-    # I would like to add Timestamps as new column
-    # run the code before explaining it
-    column_with_timestamp <- NULL
-    renamed_column$Timestamp <- renamed_column$RecordingTimestamp - renamed_column$SegmentStart
-    column_with_timestamp <- renamed_column
-    # head(column_with_timestamp)
-    # SegmentStart is the  onset of trial(51212)
-    # SegmentEnd is the offset of trial(61655)
-    # RecordingTimestamp is the recording points(51212 to 61655)
-    # Therefore, Timestamp -> 0 (51212-51212) to 10443(61655-51212)
+---
 
-    # 3. Removing columns not needed
-    # now we don't need some of them.
-    # because we have timestamp now.
-    # ~~SegmantStart, SegmentEnd, SegmentDuration, RecordingTimestamp, PupilLeft, PupilRight~~
-    selected_column <- column_with_timestamp[,c("ParticipantName", "SegmentName", "FixationIndex",
-        "GazeEventType", "GazeEventDuration", "FixationPointX", "SaccadeIndex", "FixationPointY", "Timestamp")]
+```R
+# 2. Adding Timestamps
+# I would like to add Timestamps as new column
+# run the code before explaining it
+column_with_timestamp <- NULL
+renamed_column$Timestamp <- renamed_column$RecordingTimestamp - renamed_column$SegmentStart
+column_with_timestamp <- renamed_column
+# head(column_with_timestamp)
+# SegmentStart is the  onset of trial(51212)
+# SegmentEnd is the offset of trial(61655)
+# RecordingTimestamp is the recording points(51212 to 61655)
+# Therefore, Timestamp -> 0 (51212-51212) to 10443(61655-51212)
+```
 
-    # 4. Extacting Fixation and Saccade (other than Unclassified)
-    selected_column <- selected_column[selected_column$GazeEventType != "Unclassified",]
-    # Now, if FixationIndex is an NA,
-    # the data in the row is about saccade.
-    # so we can replace the NA with SaccadeIndex.
-    selected_column$FixationIndex <- ifelse(is.na(selected_column$FixationIndex),
-        selected_column$SaccadeIndex,
-        selected_column$FixationIndex)
+---
 
-    # 5. Removing NA
-    # If the fixation point is NA, 
-    # that means that they didn't see the display.
-    # we replace NA with -1 so that we can tell that.
-    selected_column$FixationPointX <- ifelse(is.na(selected_column$FixationPointX),
-        -1,
-        selected_column$FixationPointX)
-    selected_column$FixationPointY <- ifelse(is.na(selected_column$FixationPointY),
-        -1,
-        selected_column$FixationPointY)
+```R
+# 3. Removing columns not needed
+# now we don't need some of them.
+# because we have timestamp now.
+# ~~SegmantStart, SegmentEnd, SegmentDuration, RecordingTimestamp, PupilLeft, PupilRight~~
+selected_column <- column_with_timestamp[,c("ParticipantName", "SegmentName", "FixationIndex",
+    "GazeEventType", "GazeEventDuration", "FixationPointX", "SaccadeIndex", "FixationPointY", "Timestamp")]
 
-    # data for Index is in FixationIndex
-    # So we can delete SaccadeIndex (see 4)
-    selected_column$SaccadeIndex <- NULL
-    refined_column <- selected_column
+# 4. Extacting Fixation and Saccade (other than Unclassified)
+selected_column <- selected_column[selected_column$GazeEventType != "Unclassified",]
+# Now, if FixationIndex is an NA,
+# the data in the row is about saccade.
+# so we can replace the NA with SaccadeIndex.
+selected_column$FixationIndex <- ifelse(is.na(selected_column$FixationIndex),
+    selected_column$SaccadeIndex,
+    selected_column$FixationIndex)
 
-    return(refined_column)
-}
+```
+
+---
+
+```R
+# 5. Removing NA
+# If the fixation point is NA, 
+# that means that they didn't see the display.
+# we replace NA with -1 so that we can tell that.
+selected_column$FixationPointX <- ifelse(is.na(selected_column$FixationPointX),
+    -1,
+    selected_column$FixationPointX)
+selected_column$FixationPointY <- ifelse(is.na(selected_column$FixationPointY),
+    -1,
+    selected_column$FixationPointY)
+
+# data for Index is in FixationIndex
+# So we can delete SaccadeIndex (see 4)
+selected_column$SaccadeIndex <- NULL
+refined_column <- selected_column
+
+```
+---
 
 # Running the function definition and check if it works.
+```R
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 refined_data = reduceRawDataFrame(raw) 
 head(raw)
@@ -428,6 +460,9 @@ So far, we have...
 3. Removed columns not needed
 4. Extacted Fixation and Saccade (other than Unclassified)
 5. Removed NA
+[reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67)
+
+---
 
 ## Aggregate
 
@@ -439,6 +474,8 @@ Aggregate is a function in base R.
 It aggregates the inputted data.frame (`x`),
 1. making sub-data.frames (subset) defined by the `by` input parameter.
 1. applying a function specified by the `FUN` parameter to each column of the subset
+
+---
 
 Let's say we have a refined data, applying two functions.
 
@@ -471,6 +508,9 @@ head(refined_data)
 12             -1             -1        35
 ```
 
+
+---
+
 Now, we are want to make it clear when the saccade/fixation starts and ends
 1. find earliest timestamp in the event
     -> when the saccade/fixation starts
@@ -488,6 +528,9 @@ So, what we need to do is
 1. ... to Timestamp
 
 Let's see if it works.
+
+---
+
 
 ```R
 min_table <- aggregate(
@@ -514,6 +557,8 @@ nrow(min_table)
 nrow(refined_data)
 # [1] 2941
 ```
+
+---
 
 Using the function `aggregate`, we could get `GazeStart`
 After gettin `GazeStart` and `GazeEnd`,
