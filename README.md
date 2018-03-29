@@ -24,16 +24,17 @@ head(data_frame)
 
 ???
 So far, 
-we downloaded data from Github
-and opened R.
+we have downloaded data from Github
+and opened a software, R.
 
-Then, let's see what kind of data we get.
-First, please make sure you are in the right directory.
+Now, let's see what kind of data we get.
+To begin with, please make sure you are in the right directory.
 you can check if you are in the correct folder
 using a command getwd().
-if it returns a different folder, please tell me.
-then, assign an example file name to variable `file_name`
-we can use a function `read.table` for variable assignment.
+if it returns a different folder, please tell me or ask around.
+
+Then, we assign a file name of an example file to a variable `file_name`
+In the next line, we can use a function `read.table` for variable assignment.
 Then, we can see the first several lines using `head` function.
 
 ---
@@ -46,29 +47,21 @@ Then, we can see the first several lines using `head` function.
 2             P05   Segment 1        51212      61655           10443
 3             P05   Segment 1        51212      61655           10443
 4             P05   Segment 1        51212      61655           10443
-5             P05   Segment 1        51212      61655           10443
-6             P05   Segment 1        51212      61655           10443
   RecordingTimestamp  StudioEvent StudioEventData FixationIndex SaccadeIndex
 1              51212 SceneStarted 1 3 6 d A D C B            NA            1
 2              51213                                         NA            1
 3              51217                                         NA            1
 4              51220                                         NA           NA
-5              51223                                         NA            2
-6              51227                                         NA            2
   GazeEventType GazeEventDuration FixationPointX..MCSpx. FixationPointY..MCSpx.
 1       Saccade                63                     NA                     NA
 2       Saccade                63                     NA                     NA
 3       Saccade                63                     NA                     NA
 4  Unclassified                 3                     NA                     NA
-5       Saccade                10                     NA                     NA
-6       Saccade                10                     NA                     NA
   PupilLeft PupilRight  X
 1        NA         NA NA
 2      1.54       2.42 NA
 3      1.70       2.00 NA
 4      2.14       2.05 NA
-5      1.59       2.05 NA
-6      1.53       2.03 NA
 >
 nrow(data_frame)
 > [1] 3135
@@ -87,10 +80,9 @@ We have segment start, segment end, and duration, but it doesn’t make sense.
 we need to manipulate them, so that we can understand them.
 Below them, we can see a column named studio event data.
 We need more information to tell what these character means.
-On the right, we have a column that tells us what kind of Gaze Event Type there were.
-In addition, we can see some logical constants NA.
 
-but those are not what we need. so what kind of data do we want?
+So those are not exactly what we were expecting.
+so what kind of data do we want, then?
 
 ---
 
@@ -113,91 +105,35 @@ To investigate the eye-movements, we need at least
 And they will look like this at the end:
 
 ```csv
-"ParticipantName","SegmentName","FixationPointX","FixationPointY","GazeStart","GazeEnd","Order","List","ItemNo","Condition","AOI1","AOI2","AOI3","AOI4","AOI"
-"P05","Segment 1",839,446,88,188,"1","3","6","d","A","D","C","B",1
-"P05","Segment 1",927,449,215,368,"1","3","6","d","A","D","C","B",1
-"P05","Segment 1",589,340,425,575,"1","3","6","d","A","D","C","B",1
-"P05","Segment 1",417,256,615,801,"1","3","6","d","A","D","C","B",1
-"P05","Segment 1",424,181,831,1048,"1","3","6","d","A","D","C","B",1
+   ParticipantName SegmentName FixationPointX FixationPointY GazeStart GazeEnd
+35             P05  Segment 10           1338            306       443     566
+34             P05  Segment 10           1338            305       723     886
+41             P05  Segment 10            320            699      1489    1642
+30             P05  Segment 10            505            277      1869    1999
+   Order List ItemNo Condition AOI1 AOI2 AOI3 AOI4 AOI
+35     1   26     23         c    D    C    A    B   2
+34     1   26     23         c    D    C    A    B   2
+41     1   26     23         c    D    C    A    B   3
+30     1   26     23         c    D    C    A    B   1
 ```
+
 ???
 We have seen a raw data set,
 but it is not ready to be analyzed.
 
 To investigate the eye-movements, we need these information.
-We need
 1. We have four areas, and we need to know which 
 area they focused on.
 1. we also need to know the content on the area of interest.
 1. Information about time is also important to know when they focused on the area (GazeStart, GazeEnd)
-When we analyze the data, we need to know who participated in the experiment, and which condition the trial is, and which item was used in the trial.
+When we analyze the data, we need to know who participated in the experiment, 
+and which condition the trial is, and which item was used in the trial.
 
-And they will look like this at the end:
-
----
-
-By contrast, as we have seen, the outputs from Tobii have
-
-1. x y coordinate of the gaze event
-    * but not AOI information
-1. time stamp from the onset of the trial
-    * but not the exact time when they focused on the area (GazeStart, GazeEnd)
-1. mixed information of the gaze event type 
-    * not only fixation but also saccade and unclassified
-1. information from E-Prime(StudioEvent)
-    * somehow we need to retrieve it from the row.
-
-???
-By contrast, as we have seen, the outputs from Tobii have
-
-1. x y coordinate of the gaze event
-    * but it doesn't have AOI information
-    so, we need to specify the AOI from the coordinates
-1. It has timestamp from the onset of the trial
-    * but not they are not the exact time when they focused on the area
-1. It has mixed information of the gaze event type. 
-    * not only fixation but also saccade and unclassified
-    So somehow we need to remove them.
-1. Finally it has some information from E-Prime(StudioEvent).
-    those characters stand for conditions, item number,
-    the content in the area of interest, and so on.
-    * So somehow we need to retrieve it from the row.
----
-
-And look like this (again):
-```tsv
-  ParticipantName SegmentName SegmentStart SegmentEnd SegmentDuration
-1             P05   Segment 1        51212      61655           10443
-2             P05   Segment 1        51212      61655           10443
-3             P05   Segment 1        51212      61655           10443
-4             P05   Segment 1        51212      61655           10443
-5             P05   Segment 1        51212      61655           10443
-6             P05   Segment 1        51212      61655           10443
-  RecordingTimestamp  StudioEvent StudioEventData FixationIndex SaccadeIndex
-1              51212 SceneStarted 1 3 6 d A D C B            NA            1
-2              51213                                         NA            1
-3              51217                                         NA            1
-4              51220                                         NA           NA
-5              51223                                         NA            2
-6              51227                                         NA            2
-  GazeEventType GazeEventDuration FixationPointX..MCSpx. FixationPointY..MCSpx.
-1       Saccade                63                     NA                     NA
-2       Saccade                63                     NA                     NA
-3       Saccade                63                     NA                     NA
-4  Unclassified                 3                     NA                     NA
-5       Saccade                10                     NA                     NA
-6       Saccade                10                     NA                     NA
-  PupilLeft PupilRight  X
-1        NA         NA NA
-2      1.54       2.42 NA
-3      1.70       2.00 NA
-4      2.14       2.05 NA
-5      1.59       2.05 NA
-6      1.53       2.03 NA
->
-nrow(data_frame)
-> [1] 3135
-```
+So, we need to make some changes on the raw data set.
+Let's say we want to know the area they focused on.
+But the data from tobii doesn't have AOI information
+so somehow, we need to specify the AOI from the coordinates
+and there are many changes we need to make.
 
 So, what should we do?
 
@@ -205,22 +141,38 @@ So, what should we do?
 
 ## What should we do?
 
+Some problems for organizing the data frame.
+
+1. We have to take many steps
+1. We need to apply the change to 792 files.`33*24=792`. <- `for loop`
+
+### Steps we need to take
+
+1. Getting data frame from a list of filenames
+1. Making the data frame simpler
+1. Adding when they start/end their fixation
+1. Extracting studio event from a file
+1. Adding the infomation to the data list
+
+-> Making functions can be a good way.
+
+???
 We want to change how the data frame looks like,
 but there are some problems.
 
-1. We have to change a lot.
-1. We need to apply the change to 792 files.`33*24=792`.
+We have to change a lot, and
+we need to apply the changes over and over.
 
-We can use *loop* to apply the changes to each file
-so the second in not a big deal.
+We can use *for loop* to apply the changes to each file
+so the second one is not a big deal.
 but how about the first one?
 We have to...
-
-1. get data frame from a list of filenames
+1. get a data frame from a filenames
 1. make the data frame smaller
-1. add when they start/end their fixation
-1. extract studio event from a file
-1. add the infomation to the data list
+1. add some timestamps when they start and end their fixation
+1. extract and add studio event data from a file
+
+Making functions can be a good way.
 
 ---
 
@@ -243,9 +195,9 @@ We are going to define these functions:
 
 ???
 When any program seems too hard,
-we can just break the overall program into sub-steps.
+we can just break the program into sub-steps.
 So, by making functions, I broke the long script into five steps.
-you can jump to the definition by clicking the name of the functions.
+And you can jump to the definition by clicking the name of the functions.
 
 ---
 
@@ -253,9 +205,8 @@ you can jump to the definition by clicking the name of the functions.
 
 ### Why do we make functions?
 
-If we write every program as one big chunk of statements,
-there must be a lot of problems.
-If we make functions, it allows us to...
+Writing every program as one big chunk of statements has problems
+Making functions allows us to...
 
 1. make our programs as a bunch of sub-steps
 1. reuse code instead of rewriting it.
@@ -266,16 +217,19 @@ So I would like to divide the program into separate--but cooperating--functions.
 [Functions](https://www.cs.utah.edu/~germain/PPS/Topics/functions.html)
 
 ???
+So why should we make functions?
+
 If we write every program as one big chunk of statements,
 there must be a lot of problems.
-If we make functions, it allows us to...
+But if we make functions, it allows us to...
 1. make our programs as a bunch of sub-steps
-   * When any program seems too hard, just break the overall program into sub-steps.
-1. reuse code instead of rewriting it.
-   * and share some codes with your friend (as Chen-san did).
-1. keep our variable namespace clean.
-   * local variables only "live" as long as the function does.
-1. test small parts of our program in isolation from the rest.
+   * So, we can break the long program into sub-steps, when they seem tough, 
+1. And we can reuse code instead of rewriting it.
+   * and even share some codes with your others
+Two more things.
+1. We can keep our variable namespace clean, bacause local variables only "live" as long as the function does.
+   * This may not sound like much, but keeping global namespace is important.
+1. Finally, we can test small parts of our program.
    * This is especially true in interpreted langaues, such as R, Python, Matlab, and so on.
 
 ---
