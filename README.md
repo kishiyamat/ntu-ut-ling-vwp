@@ -1,17 +1,18 @@
-name: inverse
-layout: true
-class: center, middle, inverse
----
-
 # Data trimming and analysis
 Kishiyama
 https://github.com/kisiyama
+
+???
+this is note for me.
 
 ---
 
 ## 2.1 Experiment design of Kishiyama(2018) (5 minutes, 10:45-10:55)
 We have seen this.
-
+<!--
+???
+check how note in comment works
+-->
 ---
 
 ## 2.2 Analysis using R
