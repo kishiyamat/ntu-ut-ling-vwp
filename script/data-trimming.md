@@ -219,12 +219,12 @@ So far, we have...
 
 Before moving on the next step,
 I'd like to make sure that
-everyone feel confortable with a function named aggregate.
+everyone feel confortable with a function named `aggregate`.
 
 Aggregate is a function in base R.
-It aggregates the inputted data.frame d.f.
+It aggregates the inputted data.frame (`x`),
 1. making sub-data.frames (subset) defined by the `by` input parameter.
-1. applying a function specified by the FUN parameter to each column of the subset
+1. applying a function specified by the `FUN` parameter to each column of the subset
 
 Let's say we have a refined data, applying two functions.
 
@@ -257,11 +257,57 @@ head(refined_data)
 12             -1             -1        35
 ```
 
-[Aggregate – A Powerful Tool for Data Frame in R](https://www.r-bloggers.com/aggregate-a-powerful-tool-for-data-frame-in-r/)
+Now, we are want to make it clear when the saccade/fixation starts and ends
+1. find earliest timestamp in the event
+    -> when the saccade/fixation starts
+1. find latest timestamp in the event
+    -> when the saccade/fixation ends 
+
+So, what we need to do is
+1. making sub-data.frames (subset) defined by
+    1. Paticipant(we don't want to lose this info)
+    1. Segment(we don't want to lose this info)
+    1. FixationIndex
+    1. GazeEventType
+    1. (GazeEventDuration)
+1. applying a function `min`/`max`
+1. ... to Timestamp
+
+Let's see if it works.
+
+```R
+min_table <- aggregate(
+    x = refined_data$Timestamp,
+    by = list(refined_data$ParticipantName, refined_data$SegmentName,
+        refined_data$FixationIndex,refined_data$GazeEventType,
+        refined_data$GazeEventDuration,
+        refined_data$FixationPointX, refined_data$FixationPointY),
+    FUN = min
+)
+# renaming
+colnames(min_table) <- c("ParticipantName", "SegmentName",
+    "FixationIndex", "GazeEventType", "GazeEventDuration",
+    "FixationPointX", "FixationPointY", "GazeStart")
+# re-ordering
+min_table <- min_table[order(min_table$ParticipantName,
+    min_table$SegmentName, min_table$GazeStart),]
+
+# compare with the df before
+head(min_table)
+head(refined_data)
+nrow(min_table)
+# [1] 81
+nrow(refined_data)
+# [1] 2941
+```
+
+Using the function `aggregate`, we could get `GazeStart`
+After gettin `GazeStart` and `GazeEnd`,
+We are goin to extract them and append them to the data.
 
 ### Adding when a saccade/fixation starts/ends
 
-From now on, we are going to ...
+Using `aggregate`, we are going to ...
 1. make it clear when the fixation starts and ends
     1. find earliest timestamp in the event
         -> when the saccade/fixation starts
@@ -271,14 +317,12 @@ From now on, we are going to ...
 ```R
 head(refined_data)
 addGazeFlag <- function(refined_data){
-    # help(aggregate)
-    # Making subset by FixationIndex
-    # Getting min of timestamp in the subset...
-    # to specify the time when the fixation began
+    # when the saccade/fixation starts
     min_table <- aggregate(
         x = refined_data$Timestamp,
         by = list(refined_data$ParticipantName, refined_data$SegmentName,
-            refined_data$FixationIndex,refined_data$GazeEventType, refined_data$GazeEventDuration,
+            refined_data$FixationIndex,refined_data$GazeEventType,
+            refined_data$GazeEventDuration,
             refined_data$FixationPointX, refined_data$FixationPointY),
         FUN = min
     )
@@ -286,15 +330,12 @@ addGazeFlag <- function(refined_data){
         "GazeEventType", "GazeEventDuration", "FixationPointX", "FixationPointY", "GazeStart")
     min_table <- min_table[order(min_table$ParticipantName,
         min_table$SegmentName, min_table$GazeStart),]
-    # head(min_table)
-    # head(refined_data)
-    # by aggregating, duplication in index were removed.
-    # choosing the min of Timestamp among the same event
 
-    # Specifying the time when the fixation ended 
+    # when the saccade/fixation ends
     max_table <- aggregate(
         x = refined_data$Timestamp,
-        by = list(refined_data$ParticipantName, refined_data$SegmentName, refined_data$FixationIndex,
+        by = list(refined_data$ParticipantName, refined_data$SegmentName,
+        refined_data$FixationIndex,
         refined_data$GazeEventType, refined_data$GazeEventDuration,
         refined_data$FixationPointX, refined_data$FixationPointY),
         FUN = max
@@ -304,7 +345,7 @@ addGazeFlag <- function(refined_data){
     max_table <- max_table[order(max_table$ParticipantName,
         max_table$SegmentName, max_table$GazeEnd),]
 
-    # conbine min_table and max_table('s GazeEnd)
+    # conbine min_table(GazeStart) and max_table(GazeEnd)
     # it is in the 8th column
     data_with_gaze_flag <- cbind(min_table, max_table[,8])
 
@@ -335,7 +376,7 @@ head(data_with_gaze_flag)
 ```
 
 So far, we have ... 
-1. made data simpler based on Fixation
+1. made data simpler
 1. made it clear when the fixation begins and ends
 
 Now, we are going to 
