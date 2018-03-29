@@ -223,9 +223,39 @@ everyone feel confortable with a function named aggregate.
 
 Aggregate is a function in base R.
 It aggregates the inputted data.frame d.f.
+1. making sub-data.frames (subset) defined by the `by` input parameter.
+1. applying a function specified by the FUN parameter to each column of the subset
 
-by applying a function specified by the FUN parameter
-to each column of sub-data.frames defined by the by input parameter.
+Let's say we have a refined data, applying two functions.
+
+```R
+raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
+refined_data = reduceRawDataFrame(raw) 
+head(refined_data)
+> head(refined_data,10)
+   ParticipantName SegmentName FixationIndex GazeEventType GazeEventDuration
+1              P05   Segment 1             1       Saccade                63
+2              P05   Segment 1             1       Saccade                63
+3              P05   Segment 1             1       Saccade                63
+5              P05   Segment 1             2       Saccade                10
+6              P05   Segment 1             2       Saccade                10
+7              P05   Segment 1             2       Saccade                10
+9              P05   Segment 1             3       Saccade                63
+10             P05   Segment 1             3       Saccade                63
+11             P05   Segment 1             3       Saccade                63
+12             P05   Segment 1             3       Saccade                63
+   FixationPointX FixationPointY Timestamp
+1              -1             -1         0
+2              -1             -1         1
+3              -1             -1         5
+5              -1             -1        11
+6              -1             -1        15
+7              -1             -1        18
+9              -1             -1        25
+10             -1             -1        28
+11             -1             -1        31
+12             -1             -1        35
+```
 
 [Aggregate – A Powerful Tool for Data Frame in R](https://www.r-bloggers.com/aggregate-a-powerful-tool-for-data-frame-in-r/)
 
@@ -237,10 +267,6 @@ From now on, we are going to ...
         -> when the saccade/fixation starts
     1. find latest timestamp in the event
         -> when the saccade/fixation ends 
-
-
-
-
 
 ```R
 head(refined_data)
