@@ -246,6 +246,8 @@ To make a function, you need:
 * Function `function` which returns a function
 * Argument(s) if you want.
 
+![function](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Function_machine2.svg/220px-Function_machine2.svg.png)
+
 ???
 We can create a new function using `function`.
 Let's say we want a function which double the input.
