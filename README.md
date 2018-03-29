@@ -1399,15 +1399,6 @@ data2$aff <- scale(data2$aff, scale=T)
 # data2$logit<-data2$logit_c
 tapply(data2$logit, list(data2$npi, data2$aff), mean)
 
-sum(data2[data2$cond == "a",]$Target)
-sum(data2[data2$cond == "b",]$Target)
-
-if(!require(knitr)){install.packages("knitr")}
-if(!require(lmerTest)){install.packages("lmerTest")}
-if(!require(devtools)){install.packages("devtools")}
-install_github("kisiyama/mudball",ref="master",force=TRUE)
-require(mudball)
-
 model <- lmer(logit ~ npi * aff + (1 + npi*aff |subj) + (1 + npi*aff |item), data = data2)
 model_0 <- lmer(logit ~ npi * aff + (1 |subj) + (1 |item), data = data2)
 
@@ -1422,7 +1413,13 @@ kable(fixed_effects, format = "markdown")
 write("",file=log_name, append=TRUE)
 write(as.character(model_call), file=log_name, append=TRUE)
 write("#############################", file=log_name, append=TRUE)
+```
 
+---
+
+## Comparing
+
+```R
 m00wi  <-  lmer(logit ~ npi * aff + (1|subj) + (1|item), data = data2)
 m00woi  <-  lmer(logit ~ npi + aff + (1|subj) + (1|item), data = data2)
 m00won  <-  lmer(logit ~ aff + npi:aff + (1|subj) + (1|item), data = data2)
