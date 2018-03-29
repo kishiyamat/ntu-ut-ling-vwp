@@ -376,8 +376,12 @@ head(data_with_gaze_flag)
 ```
 
 So far, we have ... 
-1. made data simpler
-1. made it clear when the fixation begins and ends
+1. [got data frame from file name](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/feature-taiwan-setup/script/data-trimming.md#getting-data-from-file-name)
+   * [how to make functions](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/feature-taiwan-setup/script/data-trimming.md#making-some-functions)
+1. [made data simpler](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/feature-taiwan-setup/script/data-trimming.md#reducing-data-frame)
+   * [what are data frames?]()
+1. [made it clear when the fixation begins and ends](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/feature-taiwan-setup/script/data-trimming.md#adding-when-a-saccadefixation-startsends)
+   * [what is the function *aggregate*?](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/feature-taiwan-setup/script/data-trimming.md#aggregate)
 
 Now, we are going to 
 1. Extract information of E-prime from a file taking a file name as an argument
