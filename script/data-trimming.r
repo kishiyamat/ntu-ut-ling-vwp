@@ -8,8 +8,8 @@ getDataFrameFromFileName <- function(file_name){
 
 reduceRawDataFrame <- function(raw){
     # 1. Renaming two columns for fixations
-    # just selecting 
-    selected_column <- raw[,c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
+    # just selecting. "X.U.FEFF.ParticipantName" for Win. "ParticipantName" for Mac/Linux.
+    selected_column <- raw[,c("X.U.FEFF.ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
         "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
         "FixationPointX..MCSpx.", "FixationPointY..MCSpx.", "PupilLeft", "PupilRight")]
     # renaming some of them
@@ -236,3 +236,64 @@ table(data_with_fixation$ParticipantName, data_with_fixation$SegmentName)
 
 # save as csv
 # write.csv(data_with_fixation, "./csv/output.csv", row.names=F)
+
+# for Mac/Linux
+reduceRawDataFrame <- function(raw){
+    # 1. Renaming two columns for fixations
+    # just selecting. "X.U.FEFF.ParticipantName" for Win. "ParticipantName" for Mac/Linux.
+    selected_column <- raw[,c("X.U.FEFF.ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
+        "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
+        "FixationPointX..MCSpx.", "FixationPointY..MCSpx.", "PupilLeft", "PupilRight")]
+    # renaming some of them
+    renamed_column <- NULL
+    colnames(selected_column) <- c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
+        "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
+        "FixationPointX", "FixationPointY", "PupilLeft", "PupilRight")
+    renamed_column <- selected_column
+
+    # 2. Adding Timestamps
+    # I would like to add Timestamps as new column
+    # run the code before explaining it
+    column_with_timestamp <- NULL
+    renamed_column$Timestamp <- renamed_column$RecordingTimestamp - renamed_column$SegmentStart
+    column_with_timestamp <- renamed_column
+    # head(column_with_timestamp)
+    # SegmentStart is the  onset of trial(51212)
+    # SegmentEnd is the offset of trial(61655)
+    # RecordingTimestamp is the recording points(51212 to 61655)
+    # Therefore, Timestamp -> 0 (51212-51212) to 10443(61655-51212)
+
+    # 3. Removing columns not needed
+    # now we don't need some of them.
+    # because we have timestamp now.
+    # ~~SegmantStart, SegmentEnd, SegmentDuration, RecordingTimestamp, PupilLeft, PupilRight~~
+    selected_column <- column_with_timestamp[,c("ParticipantName", "SegmentName", "FixationIndex",
+        "GazeEventType", "GazeEventDuration", "FixationPointX", "SaccadeIndex", "FixationPointY", "Timestamp")]
+
+    # 4. Extacting Fixation and Saccade (other than Unclassified)
+    selected_column <- selected_column[selected_column$GazeEventType != "Unclassified",]
+    # Now, if FixationIndex is an NA,
+    # the data in the row is about saccade.
+    # so we can replace the NA with SaccadeIndex.
+    selected_column$FixationIndex <- ifelse(is.na(selected_column$FixationIndex),
+        selected_column$SaccadeIndex,
+        selected_column$FixationIndex)
+
+    # 5. Removing NA
+    # If the fixation point is NA, 
+    # that means that they didn't see the display.
+    # we replace NA with -1 so that we can tell that.
+    selected_column$FixationPointX <- ifelse(is.na(selected_column$FixationPointX),
+        -1,
+        selected_column$FixationPointX)
+    selected_column$FixationPointY <- ifelse(is.na(selected_column$FixationPointY),
+        -1,
+        selected_column$FixationPointY)
+
+    # data for Index is in FixationIndex
+    # So we can delete SaccadeIndex (see 4)
+    selected_column$SaccadeIndex <- NULL
+    refined_column <- selected_column
+
+    return(refined_column)
+}
