@@ -135,11 +135,11 @@ When we analyze the data, we need to know who participated in the experiment, an
 And they will look like this at the end:
 
 ---
+
 By contrast, as we have seen, the outputs from Tobii have
 
 1. x y coordinate of the gaze event
     * but not AOI information
-    > we need to specify the AOI from the coordinates
 1. time stamp from the onset of the trial
     * but not the exact time when they focused on the area (GazeStart, GazeEnd)
 1. mixed information of the gaze event type 
@@ -151,56 +151,106 @@ By contrast, as we have seen, the outputs from Tobii have
 By contrast, as we have seen, the outputs from Tobii have
 
 1. x y coordinate of the gaze event
-    * but not AOI information
-    > we need to specify the AOI from the coordinates
-1. time stamp from the onset of the trial
-    * but not the exact time when they focused on the area (GazeStart, GazeEnd)
-1. mixed information of the gaze event type 
+    * but it doesn't have AOI information
+    so, we need to specify the AOI from the coordinates
+1. It has timestamp from the onset of the trial
+    * but not they are not the exact time when they focused on the area
+1. It has mixed information of the gaze event type. 
     * not only fixation but also saccade and unclassified
-1. information from E-Prime(StudioEvent)
-    * somehow we need to retrieve it from the row.
-
+    So somehow we need to remove them.
+1. Finally it has some information from E-Prime(StudioEvent).
+    those characters stand for conditions, item number,
+    the content in the area of interest, and so on.
+    * So somehow we need to retrieve it from the row.
 ---
-And look like this:
 
+And look like this (again):
 ```tsv
-ParticipantName SegmentName     SegmentStart    SegmentEnd      SegmentDuration RecordingTimestamp      StudioEvent     StudioEventData FixationIndex   SaccadeIndex    GazeEventType   GazeEventDuration       FixationPointX (MCSpx)  FixationPointY (MCSpx)  PupilLeft       PupilRight      
-P05     Segment 1       51212   61655   10443   51212   SceneStarted    1 3 6 d A D C B         1       Saccade 63                                      
-P05     Segment 1       51212   61655   10443   51213                           1       Saccade 63                      1.54    2.42    
-P05     Segment 1       51212   61655   10443   51217                           1       Saccade 63                      1.70    2.00    
-P05     Segment 1       51212   61655   10443   51220                                   Unclassified    3                       2.14    2.05    
-P05     Segment 1       51212   61655   10443   51223                           2       Saccade 10                      1.59    2.05    
+  ParticipantName SegmentName SegmentStart SegmentEnd SegmentDuration
+1             P05   Segment 1        51212      61655           10443
+2             P05   Segment 1        51212      61655           10443
+3             P05   Segment 1        51212      61655           10443
+4             P05   Segment 1        51212      61655           10443
+5             P05   Segment 1        51212      61655           10443
+6             P05   Segment 1        51212      61655           10443
+  RecordingTimestamp  StudioEvent StudioEventData FixationIndex SaccadeIndex
+1              51212 SceneStarted 1 3 6 d A D C B            NA            1
+2              51213                                         NA            1
+3              51217                                         NA            1
+4              51220                                         NA           NA
+5              51223                                         NA            2
+6              51227                                         NA            2
+  GazeEventType GazeEventDuration FixationPointX..MCSpx. FixationPointY..MCSpx.
+1       Saccade                63                     NA                     NA
+2       Saccade                63                     NA                     NA
+3       Saccade                63                     NA                     NA
+4  Unclassified                 3                     NA                     NA
+5       Saccade                10                     NA                     NA
+6       Saccade                10                     NA                     NA
+  PupilLeft PupilRight  X
+1        NA         NA NA
+2      1.54       2.42 NA
+3      1.70       2.00 NA
+4      2.14       2.05 NA
+5      1.59       2.05 NA
+6      1.53       2.03 NA
+>
+nrow(data_frame)
+> [1] 3135
 ```
 
 So, what should we do?
 
 ---
-## Making some functions
+
+## What should we do?
 
 We want to change how the data frame looks like,
 but there are some problems.
+
 1. We have to change a lot.
 1. We need to apply the change to 792 files.`33*24=792`.
 
-We can use *loop* to apply the changes to each file,
+We can use *loop* to apply the changes to each file
+so the second in not a big deal.
 but how about the first one?
+We have to...
+
+1. get data frame from a list of filenames
+1. make the data frame smaller
+1. add when they start/end their fixation
+1. extract studio event from a file
+1. add the infomation to the data list
+
+---
+
+## Making some functions
+
+1. makes our programs as a bunch of sub-steps
+
 We are going to define these functions:
 
-1. getDataFrameFromFileName()
+1. [getDataFrameFromFileName()]()
    -> 3
-1. reduceRawDataFrame()
+1. [reduceRawDataFrame()]()
    -> 50+
-1. addGazeFlag()
+1. [addGazeFlag()]()
    -> 40
-1. extractStudioEventDataList()
+1. [extractStudioEventDataList()]()
    -> 5
-1. addStudioEventDataList()
+1. [addStudioEventDataList()]()
    -> 10+
-1. filterOutBadTrials()
-   -> 15
 
-and there are more than 100 lines in total.
+???
+When any program seems too hard,
+we can just break the overall program into sub-steps.
+So, by making functions, I broke the long script into five steps.
+you can see the definition by clicking the name of the functions.
+
 ---
+
+## Making some functions
+
 If we write every program as one big chunk of statements,
 there must be a lot of problems.
 If we make functions, it allows us to...
