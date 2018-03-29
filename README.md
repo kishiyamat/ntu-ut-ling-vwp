@@ -216,6 +216,8 @@ Making functions allows us to...
 So I would like to divide the program into separate--but cooperating--functions.
 [Functions](https://www.cs.utah.edu/~germain/PPS/Topics/functions.html)
 
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Function_machine2.svg/220px-Function_machine2.svg.png)
+
 ???
 So why should we make functions?
 
