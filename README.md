@@ -178,7 +178,17 @@ Making functions can be a good way.
 
 ## Making some functions
 
-1. makes our programs as a bunch of sub-steps
+### Why do we make functions?
+
+Writing every program as one big chunk of statements has problems
+Making functions allows us to...
+
+1. make our programs as a bunch of sub-steps
+1. reuse code instead of rewriting it.
+1. keep our variable namespace clean.
+1. test small parts of our program in isolation from the rest.
+
+### Functions I made
 
 We are going to define these functions:
 
@@ -192,26 +202,6 @@ We are going to define these functions:
    -> 5
 1. [addStudioEventDataList()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L118-L133)
    -> 10+
-
-???
-When any program seems too hard,
-we can just break the program into sub-steps.
-So, by making functions, I broke the long script into five steps.
-And you can jump to the definition by clicking the name of the functions.
-
----
-
-## Making some functions
-
-### Why do we make functions?
-
-Writing every program as one big chunk of statements has problems
-Making functions allows us to...
-
-1. make our programs as a bunch of sub-steps
-1. reuse code instead of rewriting it.
-1. keep our variable namespace clean.
-1. test small parts of our program in isolation from the rest.
 
 So I would like to divide the program into separate--but cooperating--functions.
 [Functions](https://www.cs.utah.edu/~germain/PPS/Topics/functions.html)
@@ -234,6 +224,9 @@ Two more things.
 1. Finally, we can test small parts of our program.
    * This is especially true in interpreted langaues, such as R, Python, Matlab, and so on.
 
+By making functions, I broke the long script into five steps.
+And you can jump to the definition by clicking the name of the functions.
+
 ---
 
 ### Practice
@@ -247,10 +240,15 @@ doubleMe(4)
 ```
 
 To make a function, you need:
-* purpose
-* name for new function
-* function `function` which returns a function
-* argument(s) if you want.
+
+* Purpose
+* Name for new function
+* Function `function` which returns a function
+* Argument(s) if you want.
+
+???
+
+
 
 ---
 
