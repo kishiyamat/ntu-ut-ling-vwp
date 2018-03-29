@@ -57,6 +57,12 @@ And the number of the files are `33*24=792`.
 Before we apply the change using *for loop*,
 let's see how to make functions.
 
+### What are functions?
+
+
+### Why do we make functions?
+
+
 ### Practice
 
 ```R
@@ -73,7 +79,7 @@ To make a function, you need:
 * function `function` which returns a function
 * argument(s) if you want.
 
-### Getting data from file name
+## Getting data from file name
 
 Let's make a function for the analysis.
 > here, I'd like to get a data from file name.
@@ -126,7 +132,7 @@ head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"))
 >
 ```
 
-### Reducing data frame
+## Reducing data frame
 
 Then, I would like to remove some columns
 to make the problem simpler
@@ -215,7 +221,7 @@ So far, we have...
 4. Extacted Fixation and Saccade (other than Unclassified)
 5. Removed NA
 
-### Aggregate
+## Aggregate
 
 Before moving on the next step,
 I'd like to make sure that
@@ -305,7 +311,7 @@ Using the function `aggregate`, we could get `GazeStart`
 After gettin `GazeStart` and `GazeEnd`,
 We are goin to extract them and append them to the data.
 
-### Adding when a saccade/fixation starts/ends
+## Adding when a saccade/fixation starts/ends
 
 Using `aggregate`, we are going to ...
 1. make it clear when the fixation starts and ends
@@ -383,9 +389,10 @@ So far, we have ...
 1. [made it clear when the fixation begins and ends](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/feature-taiwan-setup/script/data-trimming.md#adding-when-a-saccadefixation-startsends)
    * [what is the function *aggregate*?](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/feature-taiwan-setup/script/data-trimming.md#aggregate)
 
-Now, we are going to 
-1. Extract information of E-prime from a file taking a file name as an argument
-> they are about conditions and items
+## Extracting information from E-Prime
+
+We let E-Prime to send information about conditions and items.
+We can find it in a column named `StudioEventData`
 
 ```R
 file_name = "npi_2017_New test_Rec 05_Segment 1.tsv"
@@ -398,10 +405,10 @@ extractStudioEventDataList = function(file_name) {
 }
 ```
 
-1. Adding the extracted information
+## Adding the extracted information
 
-matrix function
-
+We made a function which returns list of event data.
+Then, we are going to add them to the data frame.
 
 ```R
 addStudioEventDataList = function(list_of_eventdata, base_data_frame) { # Using matrix function, 
@@ -421,9 +428,12 @@ addStudioEventDataList = function(list_of_eventdata, base_data_frame) { # Using 
 }
 ```
 
-### Main part
+We are almost there!
+We are going to apply the functions we made
+for each files in the list.
+So, We need to make a list of files.
 
-#### List of files
+## List of files
 
 We need to make a list of files,
 so that we can apply the functions we made to all files.
@@ -451,7 +461,7 @@ if (length(data_list) == 0){
 }
 ```
 
-#### filter out files without fixation
+### filter out files without fixation
 
 1. make a blank list for the files with fixation
 1. read each `file_name` and check if it has fixation
@@ -478,9 +488,11 @@ filterOutBadTrials = function(data_list){
     }
     return(filtered_list)
 }
+
 filtered_data_list = filterOutBadTrials(data_list)
 ```
 
+## Main part
 ## integrate data in each segment and participants
 
 For each file, we are going to
