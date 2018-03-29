@@ -328,7 +328,9 @@ Finally, we can remove some columns we don't need.
 ```R
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 ```
+
 1. Renaming two columns for fixations
+
 ```R
 # just selecting 
 selected_column <- raw[,c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
