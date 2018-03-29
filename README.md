@@ -366,6 +366,7 @@ raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 selected_column <- raw[,c("X.U.FEFF.ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
     "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
     "FixationPointX..MCSpx.", "FixationPointY..MCSpx.", "PupilLeft", "PupilRight")]
+
 # for Mac/Linux
 selected_column <- raw[,c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
     "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
@@ -378,6 +379,16 @@ colnames(selected_column) <- c("ParticipantName", "SegmentName", "SegmentStart",
 renamed_column <- selected_column
 ```
 
+???
+Before starting, we get raw data using the function we made.
+
+The first part is just renaming some columns.
+If you are a Windows user, please run the first line.
+If you are Mac or Linux user, please run the second.
+FixationPointX and Y has something we don't need, so I just removed them.
+
+---
+
 ２. [Adding Timestamps](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L22-L32)
 
 ```R
@@ -386,24 +397,23 @@ renamed_column <- selected_column
 column_with_timestamp <- NULL
 renamed_column$Timestamp <- renamed_column$RecordingTimestamp - renamed_column$SegmentStart
 column_with_timestamp <- renamed_column
-head(column_with_timestamp, 3)
-#   FixationPointX FixationPointY PupilLeft PupilRight Timestamp
-# 1             NA             NA        NA         NA         0
-# 2             NA             NA      1.54       2.42         1
-# 3             NA             NA      1.70       2.00         5
+head(column_with_timestamp)
 # SegmentStart is the  onset of trial(51212)
 # SegmentEnd is the offset of trial(61655)
 # RecordingTimestamp is the recording points(51212 to 61655)
 # Therefore, Timestamp -> 0 (51212-51212) to 10443(61655-51212)
+  FixationPointX FixationPointY PupilLeft PupilRight Timestamp
+1             NA             NA        NA         NA         0
+2             NA             NA      1.54       2.42         1
+3             NA             NA      1.70       2.00         5
+4             NA             NA      2.14       2.05         8
+5             NA             NA      1.59       2.05        11
+6             NA             NA      1.53       2.03        15
 ```
 
 ???
-Before starting, we get raw data using the function we made.
 
-The first part is just renaming some columns.
-FixationPointX and Y has something we don't need, so I just removed them.
-
-By running the second part,
+By running the this part,
 new column named Timestamp was appended to the data frame.
 
 ---
@@ -465,7 +475,7 @@ refined_column <- selected_column
 | Inf |  Infinity | 1/0 |is.infinite()|
 
 ???
-Then We deal with the NA.
+Finally,we deal with the NA.
 NAs are data which are not available.
 So we can remove them.
 
@@ -485,7 +495,12 @@ So far, we have...
 
 ５. [Removed NA](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L50-L64)
 
+### For Windows user
+
 *[reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67)*
+
+### For MacOS / Linux user
+*[reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L241-L299)*
 
 ```R
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
