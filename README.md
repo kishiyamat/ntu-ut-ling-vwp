@@ -1,6 +1,11 @@
-
-# 2. Data trimming and analysis (by Kishiyama) (10:45-12:00)
-
+name: inverse
+layout: true
+class: center, middle, inverse
+---
+# 2. Data trimming and analysis
+Kishiyama
+https://github.com/kisiyama
+---
 ## 2.1 Experiment design of Kishiyama(2018) (5 minutes, 10:45-10:55)
 
 ## 2.2 Analysis using R
