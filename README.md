@@ -389,7 +389,8 @@ selected_column$FixationIndex <- ifelse(is.na(selected_column$FixationIndex),
 ```
 
 ???
-
+and here we delete some columns
+and extracted fixation and saccade.
 
 ---
 
@@ -411,6 +412,16 @@ selected_column$SaccadeIndex <- NULL
 refined_column <- selected_column
 
 ```
+
+### What it NA?
+
+
+```R
+```
+
+???
+Then We deal with the NA.
+
 ---
 
 # Running the function definition and check if it works.
