@@ -474,10 +474,15 @@ So we can remove them.
 ## Let's Run the function definition and check if it works.
 
 So far, we have...
+
 １. [Renamed two columns for fixations](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L10-L20)
+
 ２. [Added Timestamps](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L22-L32)
+
 ３. [Removed columns not needed](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L34-L39)
+
 ４. [Extracted Fixation and Saccade (other than Unclassified)](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L41-L48)
+
 ５. [Removed NA](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L50-L64)
 
 *[reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67)*
