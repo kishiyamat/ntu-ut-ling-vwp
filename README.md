@@ -712,7 +712,7 @@ colnames(data_with_gaze_flag) <- c("ParticipantName", "SegmentName", "FixationIn
     "GazeStart", "GazeEnd")
 ```
 
-* [addGazeFlag()]()
+* [addGazeFlag()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L69-L108)
 
 ```R
 data_with_gaze_flag = addGazeFlag(refined_data)
