@@ -413,8 +413,14 @@ refined_column <- selected_column
 
 ```
 
-### What it NA?
+### [What it NA?](https://qiita.com/Qiita/items/c686397e4a0f4f11683d)
 
+| Value | Stand for |日本語名 | Example | Explanation | Boolean | Image |
+|:--------:|:--------:|:--------:|:--------:|:--------|:--------|:--------:|
+| NA |Not Available | 欠損値 |NA|本来データが存在しているが、何らかの理由でデータが存在していない状態を示す|is.na()|<img src="https://qiita-image-store.s3.amazonaws.com/0/135663/a6d4bd77-c650-36b3-cfbd-5db73b228fb5.png" width=100>|
+| NaN |Not a Number | 非数値|0/0|計算不可能な式の結果として表される|is.nan()|<img src="https://qiita-image-store.s3.amazonaws.com/0/135663/d0b8b580-7c76-a562-bde9-909595d741f0.png" width=100>|
+| NULL  | null |非存在 |NULL|もともと値が存在していないことを示す|is.null()|![nc69175.jpg](https://qiita-image-store.s3.amazonaws.com/0/135663/ffcfc4e4-3044-0707-b934-b85782556f84.jpeg)|
+| Inf |  Infinity| 無限大 |1/0|無限に発散する計算結果として表される|is.infinite()|![110622infinity_02.jpg](https://qiita-image-store.s3.amazonaws.com/0/135663/b28c28d5-cefa-a464-23ae-7c64ee522cda.jpeg)|
 
 ```R
 ```
