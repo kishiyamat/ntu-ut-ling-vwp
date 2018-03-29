@@ -230,15 +230,15 @@ We have to...
 
 We are going to define these functions:
 
-1. [getDataFrameFromFileName()]()
+1. [getDataFrameFromFileName()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L3-L7)
    -> 3
-1. [reduceRawDataFrame()]()
+1. [reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67)
    -> 50+
-1. [addGazeFlag()]()
+1. [addGazeFlag()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L69-L108)
    -> 40
-1. [extractStudioEventDataList()]()
+1. [extractStudioEventDataList()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L110-L116)
    -> 5
-1. [addStudioEventDataList()]()
+1. [addStudioEventDataList()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L118-L133)
    -> 10+
 
 ???
