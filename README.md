@@ -328,7 +328,7 @@ Finally, we can remove some columns we don't need.
 ```R
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 ```
-1. Renaming two columns for fixations
+1. [Renaming two columns for fixations](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L10-L20)
 ```R
 # just selecting 
 selected_column <- raw[,c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
@@ -342,7 +342,7 @@ colnames(selected_column) <- c("ParticipantName", "SegmentName", "SegmentStart",
 renamed_column <- selected_column
 ```
 
-2. Adding Timestamps
+2. [Adding Timestamps](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L22-L32)
 
 ```R
 # I would like to add Timestamps as new column
@@ -364,7 +364,7 @@ new column named Timestamp was appended to the data frame.
 
 ---
 
-3. Removing columns not needed
+3. [Removing columns not needed](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L34-L39)
 
 ```R
 # now we don't need some of them.
@@ -374,7 +374,7 @@ selected_column <- column_with_timestamp[,c("ParticipantName", "SegmentName", "F
     "GazeEventType", "GazeEventDuration", "FixationPointX", "SaccadeIndex", "FixationPointY", "Timestamp")]
 ```
 
-4. Extacting Fixation and Saccade (other than Unclassified)
+4. [Extacting Fixation and Saccade (other than Unclassified)](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L41-L48)
 
 ```R
 selected_column <- selected_column[selected_column$GazeEventType != "Unclassified",]
@@ -393,7 +393,7 @@ selected_column$FixationIndex <- ifelse(is.na(selected_column$FixationIndex),
 ---
 
 ```R
-# 5. Removing NA
+# 5. [Removing NA](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L50-L64)
 # If the fixation point is NA, 
 # that means that they didn't see the display.
 # we replace NA with -1 so that we can tell that.
