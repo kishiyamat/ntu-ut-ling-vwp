@@ -18,6 +18,7 @@ check how note in comment works
 
 ## 2.2 Analysis using R
 
+見えてますか？
 ???
 <!---
 check how note in comment works
