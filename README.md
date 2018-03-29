@@ -1,4 +1,5 @@
 # [Data trimming and analysis](https://kisiyama.github.io/ntu-ut-ling-vwp/)
+
 Kishiyama
 https://github.com/kisiyama
 
@@ -6,19 +7,30 @@ https://github.com/kisiyama
 
 ## 2.2 Analysis using R
 
-### Data Structure (5 minutes)
+### Data Structure
 
 * Downloading data from Github
-* Opening the data with R
+* Setting working directory
+* Opening the data with R <- We are here!
+
+```R
+getwd()
+# setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
+file_name <- "npi_2017_New test_Rec 05_Segment 1.tsv"
+data_frame <- read.table(file_name, head=T, sep="\t",
+    na.string="NA", encoding="UTF-8")
+head(data_frame)
+```
 
 ???
 So far, 
 we downloaded data from Github
 and opened R.
-
-I'd like to use github to do that below,
-because it is quite difficult to share code in PPT,
-We start with trimming the data we just saw.
+Then, let's see what kind of data we get.
+First, please make sure you are in the right directory.
+then, assign an example file name to variable `file_name`
+we can use a function `read.table` for variable assignment.
+Then, we can see the first several lines using `head` function.
 
 ---
 
