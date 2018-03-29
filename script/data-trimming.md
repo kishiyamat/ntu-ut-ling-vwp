@@ -1,5 +1,9 @@
 # data trimming
 
+## What kind of data set do we need?
+
+We have seen a raw data set,
+but it is not ready to be analyzed.
 To investigate the eye-movements, we need at least
 
 1. the area where they focused (AOI)
@@ -9,7 +13,7 @@ To investigate the eye-movements, we need at least
 1. the condition of the trial (Condition)
 1. the item in the trial (ItemNo)
 
-And they will look like this:
+And they will look like this at the end:
 
 ```csv
 "ParticipantName","SegmentName","FixationPointX","FixationPointY","GazeStart","GazeEnd","Order","List","ItemNo","Condition","AOI1","AOI2","AOI3","AOI4","AOI"
@@ -43,13 +47,24 @@ P05     Segment 1       51212   61655   10443   51220                           
 P05     Segment 1       51212   61655   10443   51223                           2       Saccade 10                      1.59    2.05    
 ```
 
-### Makine some functions
-#### Practice
+So, what should we do?
+
+## Making some functions
+
+We want to change how the data frame look like.
+At the same time, we want to apply the change to each file.
+And the number of the files are `33*24=792`.
+Before we apply the change using *for loop*,
+let's see how to make functions.
+
+### Practice
+
 ```R
 doubleMe <- function(argument){
     doubled_argument = argument * 2
     return((doubled_argument)) 
 }
+doubleMe(4)
 ```
 
 To make a function, you need:
@@ -58,12 +73,14 @@ To make a function, you need:
 * function `function` which returns a function
 * argument(s) if you want.
 
-#### Data trimming
+### Getting data from file name
 
-1. get the data frame from a file name
+Let's make a function for the analysis.
 > here, I'd like to get a data from file name.
 > but I don't want to repeat calling `read.table`
 > because it requires some arguments.
+> So, I will make a simple function,
+> so that we can read the data frame with a line.
 
 ```R
 getDataFrameFromFileName <- function(file_name){
@@ -75,7 +92,7 @@ getDataFrameFromFileName <- function(file_name){
 
 ```R
 getwd()
-# set dir to result
+# set dir to `result`
 setwd("/home/kisiyama/home/thesis/ntu-ut-ling-vwp/result")
 head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"))
   ParticipantName SegmentName SegmentStart SegmentEnd SegmentDuration
@@ -109,20 +126,24 @@ head(getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv"))
 >
 ```
 
-Then, I would like to remove some colums.
-1. removing columns not needed and adding Timestamps
-1. extracting fixations(remove saccade and unclassified)
-1. removing StudioEvent
+### Reducing data frame
 
-#### Removing columns not needed and adding Timestamps
+Then, I would like to remove some columns
+to make the problem simpler
+1. Renaming columns for fixations
+2. Adding Timestamps
+3. Removing columns not needed
+4. Extacting Fixation and Saccade (other than Unclassified)
+5. Removing NA
 
 ```R
-# we assign the data frame to `raw` for test purpose.
-# we can check the contents using `head` function
+# We assign the data frame to `raw` for checking.
+# We can check the contents using `head` function.
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 
 reduceRawDataFrame <- function(raw){
-    # removing some columns
+    # 1. Renaming two columns for fixations
+    # just selecting 
     selected_column <- raw[,c("ParticipantName", "SegmentName", "SegmentStart", "SegmentEnd", "SegmentDuration",
         "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
         "FixationPointX..MCSpx.", "FixationPointY..MCSpx.", "PupilLeft", "PupilRight")]
@@ -132,26 +153,27 @@ reduceRawDataFrame <- function(raw){
         "RecordingTimestamp", "FixationIndex", "SaccadeIndex", "GazeEventType", "GazeEventDuration",
         "FixationPointX", "FixationPointY", "PupilLeft", "PupilRight")
     renamed_column <- selected_column
-    # you can see the new data frame with tiny changes
-    # head(renamed_column)
 
+    # 2. Adding Timestamps
     # I would like to add Timestamps as new column
     # run the code before explaining it
     column_with_timestamp <- NULL
     renamed_column$Timestamp <- renamed_column$RecordingTimestamp - renamed_column$SegmentStart
     column_with_timestamp <- renamed_column
     # head(column_with_timestamp)
-    # SegmentStart: onset of trial(e.g: 500)
-    # RecordingTimestamp: recording point(e.g: 500--1000)
+    # SegmentStart is the  onset of trial(51212)
+    # SegmentEnd is the offset of trial(61655)
+    # RecordingTimestamp is the recording points(51212 to 61655)
+    # Therefore, Timestamp -> 0 (51212-51212) to 10443(61655-51212)
 
-    # remove some columns(again)
+    # 3. Removing columns not needed
     # now we don't need some of them.
+    # because we have timestamp now.
     # ~~SegmantStart, SegmentEnd, SegmentDuration, RecordingTimestamp, PupilLeft, PupilRight~~
     selected_column <- column_with_timestamp[,c("ParticipantName", "SegmentName", "FixationIndex",
         "GazeEventType", "GazeEventDuration", "FixationPointX", "SaccadeIndex", "FixationPointY", "Timestamp")]
 
-    # extacting Fixation and Saccade (other than Unclassified)
-    # GazeEventType (Unclassified, Fixation, Saccade)
+    # 4. Extacting Fixation and Saccade (other than Unclassified)
     selected_column <- selected_column[selected_column$GazeEventType != "Unclassified",]
     # Now, if FixationIndex is an NA,
     # the data in the row is about saccade.
@@ -160,6 +182,7 @@ reduceRawDataFrame <- function(raw){
         selected_column$SaccadeIndex,
         selected_column$FixationIndex)
 
+    # 5. Removing NA
     # If the fixation point is NA, 
     # that means that they didn't see the display.
     # we replace NA with -1 so that we can tell that.
@@ -171,36 +194,54 @@ reduceRawDataFrame <- function(raw){
         selected_column$FixationPointY)
 
     # data for Index is in FixationIndex
-    # So we can delete SaccadeIndex
+    # So we can delete SaccadeIndex (see 4)
     selected_column$SaccadeIndex <- NULL
     refined_column <- selected_column
 
     return(refined_column)
 }
 
-# run the function definition and check if it works
+# Running the function definition and check if it works.
 raw =  getDataFrameFromFileName("npi_2017_New test_Rec 05_Segment 1.tsv")
 refined_data = reduceRawDataFrame(raw) 
 head(raw)
 head(refined_data)
 ```
 
-So far, we removed columns not needed and adding Timestamps
+So far, we have...
+1. Renamed columns for fixations
+2. Added Timestamps
+3. Removed columns not needed
+4. Extacted Fixation and Saccade (other than Unclassified)
+5. Removed NA
 
-We are going to...
-1. make data simpler based on Fixation
-> integrate rows with the same fixation index into a row
-1. make it clear when the fixation begins and ends
+### Aggregate
 
-> Aggregate splits the data into subsets, computes summary statistics for each, and returns the result in a convenient form.
+Before moving on the next step,
+I'd like to make sure that
+everyone feel confortable with a function aggregate.
+
+
+### Adding when a saccade/fixation starts/ends
+
+From now on, we are going to ...
+1. make it clear when the fixation starts and ends
+    1. find earliest timestamp in the event
+        -> when the saccade/fixation starts
+    1. find latest timestamp in the event
+        -> when the saccade/fixation ends 
+
+
+
+
 
 ```R
 head(refined_data)
-help(aggregate)
 addGazeFlag <- function(refined_data){
+    # help(aggregate)
     # Making subset by FixationIndex
     # Getting min of timestamp in the subset...
-    # is to specify the time when the fixation began
+    # to specify the time when the fixation began
     min_table <- aggregate(
         x = refined_data$Timestamp,
         by = list(refined_data$ParticipantName, refined_data$SegmentName,
@@ -210,9 +251,12 @@ addGazeFlag <- function(refined_data){
     )
     colnames(min_table) <- c("ParticipantName", "SegmentName", "FixationIndex",
         "GazeEventType", "GazeEventDuration", "FixationPointX", "FixationPointY", "GazeStart")
-    # head(min_table)
     min_table <- min_table[order(min_table$ParticipantName,
-    min_table$SegmentName, min_table$GazeStart),]
+        min_table$SegmentName, min_table$GazeStart),]
+    # head(min_table)
+    # head(refined_data)
+    # by aggregating, duplication in index were removed.
+    # choosing the min of Timestamp among the same event
 
     # Specifying the time when the fixation ended 
     max_table <- aggregate(
@@ -238,15 +282,35 @@ addGazeFlag <- function(refined_data){
 
     return(data_with_gaze_flag)
 }
+data_with_gaze_flag = addGazeFlag(refined_data)
+head(data_with_gaze_flag)
+
+   ParticipantName SegmentName FixationIndex GazeEventType GazeEventDuration
+34             P05   Segment 1             1       Saccade                63
+3              P05   Segment 1             2       Saccade                10
+35             P05   Segment 1             3       Saccade                63
+68             P05   Segment 1             1      Fixation               103
+8              P05   Segment 1             4       Saccade                23
+69             P05   Segment 1             2      Fixation               157
+   FixationPointX FixationPointY GazeStart GazeEnd
+34             -1             -1         0       5
+3              -1             -1        11      18
+35             -1             -1        25      85
+68            839            446        88     188
+8              -1             -1       191     211
+69            927            449       215     368
 ```
 
-1. Extracting information of E-prime from a file taking a file name as an argument
+So far, we have ... 
+1. made data simpler based on Fixation
+1. made it clear when the fixation begins and ends
 
-<!--
-l = extractStudioEventDataList("npi_2017_New test_Rec 05_Segment 1.tsv")
--->
+Now, we are going to 
+1. Extract information of E-prime from a file taking a file name as an argument
+> they are about conditions and items
 
 ```R
+file_name = "npi_2017_New test_Rec 05_Segment 1.tsv"
 extractStudioEventDataList = function(file_name) {
     raw_data_frame = getDataFrameFromFileName(file_name)
     eventdata = raw_data_frame[1,]$StudioEventData

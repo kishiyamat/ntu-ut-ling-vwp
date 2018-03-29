@@ -7,17 +7,24 @@
 
 ### Data Structure (5 minutes)
 
-* download data from github
-* open the data with R
-* make function
+* Downloading data from Github
+* Opening the data with R
 
-Because it is quite difficult to share code in PPT,
-I'd like to use github to do that below.
+I'd like to use github to do that below,
+because it is quite difficult to share code in PPT,
+We start with trimming the data we just saw.
 
 ### Trimming (10 minutes)
 [data trimming](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/master/script/data-trimming.md)
+
+* Making function
+* Aggregate
+* For loop
+
 ### Graphing (10 minutes)
 [data visualizing](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/master/script/data-visualizing.md)
+
 ### LME (10 minutes)
 [data analyzing](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/master/script/data-analyzing.md)
+
 ### Misc-tips
