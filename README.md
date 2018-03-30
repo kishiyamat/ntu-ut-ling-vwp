@@ -438,6 +438,21 @@ selected_column$FixationIndex <- ifelse(is.na(selected_column$FixationIndex),
     selected_column$SaccadeIndex,
     selected_column$FixationIndex)
 
+> head(selected_column)
+  ParticipantName SegmentName FixationIndex GazeEventType GazeEventDuration
+1             P05   Segment 1             1       Saccade                63
+2             P05   Segment 1             1       Saccade                63
+3             P05   Segment 1             1       Saccade                63
+5             P05   Segment 1             2       Saccade                10
+6             P05   Segment 1             2       Saccade                10
+7             P05   Segment 1             2       Saccade                10
+  FixationPointX SaccadeIndex FixationPointY Timestamp
+1             NA            1             NA         0
+2             NA            1             NA         1
+3             NA            1             NA         5
+5             NA            2             NA        11
+6             NA            2             NA        15
+7             NA            2             NA        18
 ```
 
 ???
@@ -490,6 +505,8 @@ So far, we have...
 1. [Removed columns not needed](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L34-L39)
 1. [Extracted Fixation and Saccade (other than Unclassified)](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L41-L48)
 1. [Removed NA](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L50-L64)
+
+And they are integrated into a function:
 
 For Windows user
 
@@ -746,9 +763,9 @@ So far, we have ...
 
 ## Extracting information from E-Prime
 
-We let E-Prime to send information about conditions and items.
-We can find it in a column named `StudioEventData`
-
+* E-Prime send information about conditions and items.
+* We can find it in a column named `StudioEventData`
+* We want to extract them somehow.
 ```R
 file_name = "npi_2017_New test_Rec 05_Segment 1.tsv"
 extractStudioEventDataList = function(file_name) {
@@ -759,6 +776,12 @@ extractStudioEventDataList = function(file_name) {
     return(list_of_eventdata)
 }
 ```
+
+???
+We let E-Prime to send information about conditions and items.
+We can find it in a column named `StudioEventData`
+We want to extract them somehow because it has important information..
+So, what kind of data it has?
 
 ---
 
@@ -789,6 +812,13 @@ We are almost there!
 We are going to apply the functions we made
 for each files in the list.
 So, We need to make a list of files.
+
+???
+We made a function which returns list of event data.
+Then, we are going to add them to the data frame.
+you can see some words like List, Condition, AOI1 and so on.
+We defined which information we let E-Prime to send.
+We append the list of event data to other data frame.
 
 ---
 
@@ -823,14 +853,25 @@ if (length(data_list) == 0){
 ---
 
 ```R
-head(data_list) 
-# print the result
-
-
+head(data_list,10) 
+#  [1] "npi_2017_New test_Rec 05_Segment 10.tsv"
+#  [2] "npi_2017_New test_Rec 05_Segment 11.tsv"
+#  [3] "npi_2017_New test_Rec 05_Segment 12.tsv"
+#  [4] "npi_2017_New test_Rec 05_Segment 13.tsv"
+#  [5] "npi_2017_New test_Rec 05_Segment 14.tsv"
+#  [6] "npi_2017_New test_Rec 05_Segment 15.tsv"
+#  [7] "npi_2017_New test_Rec 05_Segment 16.tsv"
+#  [8] "npi_2017_New test_Rec 05_Segment 17.tsv"
+#  [9] "npi_2017_New test_Rec 05_Segment 18.tsv"
+# [10] "npi_2017_New test_Rec 05_Segment 19.tsv"
 ```
 
 We are assuming that there's no trial without fixation.
 We need to check if the file has at least one fixation.
+
+???
+What we are assuming here is that there's no trial without fixation.
+But we need to check if the file has at least one fixation.
 
 ---
 
