@@ -485,21 +485,18 @@ So we can remove them.
 
 So far, we have...
 
-１. [Renamed two columns for fixations](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L10-L20)
+1. [Renamed two columns for fixations](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L10-L20)
+1. [Added Timestamps](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L22-L32)
+1. [Removed columns not needed](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L34-L39)
+1. [Extracted Fixation and Saccade (other than Unclassified)](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L41-L48)
+1. [Removed NA](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L50-L64)
 
-２. [Added Timestamps](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L22-L32)
-
-３. [Removed columns not needed](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L34-L39)
-
-４. [Extracted Fixation and Saccade (other than Unclassified)](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L41-L48)
-
-５. [Removed NA](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L50-L64)
-
-### For Windows user
+For Windows user
 
 *[reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L9-L67)*
 
-### For MacOS / Linux user
+For MacOS / Linux user
+
 *[reduceRawDataFrame()](https://github.com/kisiyama/ntu-ut-ling-vwp/blob/gh-pages/script/data-trimming.r#L241-L299)*
 
 ```R
@@ -508,6 +505,7 @@ refined_data = reduceRawDataFrame(raw)
 head(raw)
 head(refined_data)
 ```
+
 ???
 To sum up, we took five steps to make the data frame simpler.
 and we can see these steps in a function named
